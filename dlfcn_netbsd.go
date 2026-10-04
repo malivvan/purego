@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2025 The Ebitengine Authors
 
-package purego
+package pure
 
 // Source for constants: https://github.com/NetBSD/src/blob/trunk/include/dlfcn.h
 

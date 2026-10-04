@@ -35,15 +35,15 @@ func (a *argset) arg(i int) unsafe.Pointer {
 //go:linkname _cgo_libc_setuid syscall.cgo_libc_setuid
 //go:linkname _cgo_libc_setgroups syscall.cgo_libc_setgroups
 
-var _cgo_libc_setegid = &_cgo_purego_setegid_trampoline
-var _cgo_libc_seteuid = &_cgo_purego_seteuid_trampoline
-var _cgo_libc_setgid = &_cgo_purego_setgid_trampoline
-var _cgo_libc_setregid = &_cgo_purego_setregid_trampoline
-var _cgo_libc_setresgid = &_cgo_purego_setresgid_trampoline
-var _cgo_libc_setresuid = &_cgo_purego_setresuid_trampoline
-var _cgo_libc_setreuid = &_cgo_purego_setreuid_trampoline
-var _cgo_libc_setuid = &_cgo_purego_setuid_trampoline
-var _cgo_libc_setgroups = &_cgo_purego_setgroups_trampoline
+var _cgo_libc_setegid = &_cgo_pure_setegid_trampoline
+var _cgo_libc_seteuid = &_cgo_pure_seteuid_trampoline
+var _cgo_libc_setgid = &_cgo_pure_setgid_trampoline
+var _cgo_libc_setregid = &_cgo_pure_setregid_trampoline
+var _cgo_libc_setresgid = &_cgo_pure_setresgid_trampoline
+var _cgo_libc_setresuid = &_cgo_pure_setresuid_trampoline
+var _cgo_libc_setreuid = &_cgo_pure_setreuid_trampoline
+var _cgo_libc_setuid = &_cgo_pure_setuid_trampoline
+var _cgo_libc_setgroups = &_cgo_pure_setgroups_trampoline
 
 //go:nosplit
 //go:norace
@@ -53,13 +53,13 @@ func errno() int32 {
 	return **(**int32)(unsafe.Pointer(&loc))
 }
 
-//go:linkname _cgo_purego_setegid_trampoline _cgo_purego_setegid_trampoline
-var _cgo_purego_setegid_trampoline byte
-var x_cgo_purego_setegid_call = x_cgo_purego_setegid
+//go:linkname _cgo_pure_setegid_trampoline _cgo_pure_setegid_trampoline
+var _cgo_pure_setegid_trampoline byte
+var x_cgo_pure_setegid_call = x_cgo_pure_setegid
 
 //go:nosplit
 //go:norace
-func x_cgo_purego_setegid(c *argset) {
+func x_cgo_pure_setegid(c *argset) {
 	ret := setegid(uint32(uintptr(c.arg(0))))
 	if ret == -1 {
 		c.retval = uintptr(errno())
@@ -68,13 +68,13 @@ func x_cgo_purego_setegid(c *argset) {
 	}
 }
 
-//go:linkname _cgo_purego_seteuid_trampoline _cgo_purego_seteuid_trampoline
-var _cgo_purego_seteuid_trampoline byte
-var x_cgo_purego_seteuid_call = x_cgo_purego_seteuid
+//go:linkname _cgo_pure_seteuid_trampoline _cgo_pure_seteuid_trampoline
+var _cgo_pure_seteuid_trampoline byte
+var x_cgo_pure_seteuid_call = x_cgo_pure_seteuid
 
 //go:nosplit
 //go:norace
-func x_cgo_purego_seteuid(c *argset) {
+func x_cgo_pure_seteuid(c *argset) {
 	ret := seteuid(uint32(uintptr(c.arg(0))))
 	if ret == -1 {
 		c.retval = uintptr(errno())
@@ -83,13 +83,13 @@ func x_cgo_purego_seteuid(c *argset) {
 	}
 }
 
-//go:linkname _cgo_purego_setgid_trampoline _cgo_purego_setgid_trampoline
-var _cgo_purego_setgid_trampoline byte
-var x_cgo_purego_setgid_call = x_cgo_purego_setgid
+//go:linkname _cgo_pure_setgid_trampoline _cgo_pure_setgid_trampoline
+var _cgo_pure_setgid_trampoline byte
+var x_cgo_pure_setgid_call = x_cgo_pure_setgid
 
 //go:nosplit
 //go:norace
-func x_cgo_purego_setgid(c *argset) {
+func x_cgo_pure_setgid(c *argset) {
 	ret := setgid(uint32(uintptr(c.arg(0))))
 	if ret == -1 {
 		c.retval = uintptr(errno())
@@ -98,13 +98,13 @@ func x_cgo_purego_setgid(c *argset) {
 	}
 }
 
-//go:linkname _cgo_purego_setregid_trampoline _cgo_purego_setregid_trampoline
-var _cgo_purego_setregid_trampoline byte
-var x_cgo_purego_setregid_call = x_cgo_purego_setregid
+//go:linkname _cgo_pure_setregid_trampoline _cgo_pure_setregid_trampoline
+var _cgo_pure_setregid_trampoline byte
+var x_cgo_pure_setregid_call = x_cgo_pure_setregid
 
 //go:nosplit
 //go:norace
-func x_cgo_purego_setregid(c *argset) {
+func x_cgo_pure_setregid(c *argset) {
 	ret := setregid(uint32(uintptr(c.arg(0))), uint32(uintptr(c.arg(1))))
 	if ret == -1 {
 		c.retval = uintptr(errno())
@@ -113,13 +113,13 @@ func x_cgo_purego_setregid(c *argset) {
 	}
 }
 
-//go:linkname _cgo_purego_setresgid_trampoline _cgo_purego_setresgid_trampoline
-var _cgo_purego_setresgid_trampoline byte
-var x_cgo_purego_setresgid_call = x_cgo_purego_setresgid
+//go:linkname _cgo_pure_setresgid_trampoline _cgo_pure_setresgid_trampoline
+var _cgo_pure_setresgid_trampoline byte
+var x_cgo_pure_setresgid_call = x_cgo_pure_setresgid
 
 //go:nosplit
 //go:norace
-func x_cgo_purego_setresgid(c *argset) {
+func x_cgo_pure_setresgid(c *argset) {
 	ret := setresgid(uint32(uintptr(c.arg(0))), uint32(uintptr(c.arg(1))), uint32(uintptr(c.arg(2))))
 	if ret == -1 {
 		c.retval = uintptr(errno())
@@ -128,13 +128,13 @@ func x_cgo_purego_setresgid(c *argset) {
 	}
 }
 
-//go:linkname _cgo_purego_setresuid_trampoline _cgo_purego_setresuid_trampoline
-var _cgo_purego_setresuid_trampoline byte
-var x_cgo_purego_setresuid_call = x_cgo_purego_setresuid
+//go:linkname _cgo_pure_setresuid_trampoline _cgo_pure_setresuid_trampoline
+var _cgo_pure_setresuid_trampoline byte
+var x_cgo_pure_setresuid_call = x_cgo_pure_setresuid
 
 //go:nosplit
 //go:norace
-func x_cgo_purego_setresuid(c *argset) {
+func x_cgo_pure_setresuid(c *argset) {
 	ret := setresuid(uint32(uintptr(c.arg(0))), uint32(uintptr(c.arg(1))), uint32(uintptr(c.arg(2))))
 	if ret == -1 {
 		c.retval = uintptr(errno())
@@ -143,13 +143,13 @@ func x_cgo_purego_setresuid(c *argset) {
 	}
 }
 
-//go:linkname _cgo_purego_setreuid_trampoline _cgo_purego_setreuid_trampoline
-var _cgo_purego_setreuid_trampoline byte
-var x_cgo_purego_setreuid_call = x_cgo_purego_setreuid
+//go:linkname _cgo_pure_setreuid_trampoline _cgo_pure_setreuid_trampoline
+var _cgo_pure_setreuid_trampoline byte
+var x_cgo_pure_setreuid_call = x_cgo_pure_setreuid
 
 //go:nosplit
 //go:norace
-func x_cgo_purego_setreuid(c *argset) {
+func x_cgo_pure_setreuid(c *argset) {
 	ret := setreuid(uint32(uintptr(c.arg(0))), uint32(uintptr(c.arg(1))))
 	if ret == -1 {
 		c.retval = uintptr(errno())
@@ -158,13 +158,13 @@ func x_cgo_purego_setreuid(c *argset) {
 	}
 }
 
-//go:linkname _cgo_purego_setuid_trampoline _cgo_purego_setuid_trampoline
-var _cgo_purego_setuid_trampoline byte
-var x_cgo_purego_setuid_call = x_cgo_purego_setuid
+//go:linkname _cgo_pure_setuid_trampoline _cgo_pure_setuid_trampoline
+var _cgo_pure_setuid_trampoline byte
+var x_cgo_pure_setuid_call = x_cgo_pure_setuid
 
 //go:nosplit
 //go:norace
-func x_cgo_purego_setuid(c *argset) {
+func x_cgo_pure_setuid(c *argset) {
 	ret := setuid(uint32(uintptr(c.arg(0))))
 	if ret == -1 {
 		c.retval = uintptr(errno())
@@ -173,13 +173,13 @@ func x_cgo_purego_setuid(c *argset) {
 	}
 }
 
-//go:linkname _cgo_purego_setgroups_trampoline _cgo_purego_setgroups_trampoline
-var _cgo_purego_setgroups_trampoline byte
-var x_cgo_purego_setgroups_call = x_cgo_purego_setgroups
+//go:linkname _cgo_pure_setgroups_trampoline _cgo_pure_setgroups_trampoline
+var _cgo_pure_setgroups_trampoline byte
+var x_cgo_pure_setgroups_call = x_cgo_pure_setgroups
 
 //go:nosplit
 //go:norace
-func x_cgo_purego_setgroups(c *argset) {
+func x_cgo_pure_setgroups(c *argset) {
 	ret := setgroups(uint32(uintptr(c.arg(0))), (*uint32)(c.arg(1)))
 	if ret == -1 {
 		c.retval = uintptr(errno())

@@ -6,11 +6,11 @@
 package main
 
 import (
-	_ "github.com/ebitengine/purego"
+	_ "github.com/malivvan/appkit/pure"
 )
 
 import "C"
 
-// This file tests that build Cgo and purego at the same time succeeds to build (#189).
+// This file tests that build Cgo and pure at the same time succeeds to build (#189).
 func main() {
 }

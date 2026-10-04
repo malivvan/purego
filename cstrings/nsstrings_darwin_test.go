@@ -6,8 +6,8 @@ package cstrings_test
 import (
 	"testing"
 
-	"github.com/ebitengine/purego/cstrings"
-	"github.com/ebitengine/purego/objc"
+	"github.com/malivvan/appkit/pure/cstrings"
+	"github.com/malivvan/appkit/pure/objc"
 )
 
 func TestNSStringToString(t *testing.T) {

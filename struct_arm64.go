@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2024 The Ebitengine Authors
 
-package purego
+package pure
 
 import (
 	"math"
@@ -11,7 +11,7 @@ import (
 	stdstrings "strings"
 	"unsafe"
 
-	"github.com/ebitengine/purego/internal/strings"
+	"github.com/malivvan/appkit/pure/internal/strings"
 )
 
 // structReturnInMemory always reports false on arm64: a struct returned in
@@ -208,7 +208,7 @@ func placeRegistersArm64(v reflect.Value, addFloat func(uintptr), addInt func(ui
 			case reflect.Array:
 				place(f)
 			default:
-				panic("purego: unsupported kind " + f.Kind().String())
+				panic("pure: unsupported kind " + f.Kind().String())
 			}
 		}
 	}
@@ -314,7 +314,7 @@ func isHVA(t reflect.Type) bool {
 // This is used for Darwin ARM64's byte-level packing of non-HFA/HVA structs.
 func copyStruct8ByteChunks(ptr unsafe.Pointer, size uintptr, addChunk func(uintptr)) {
 	if !isDarwin {
-		panic("purego: should only be called on darwin")
+		panic("pure: should only be called on darwin")
 	}
 	for offset := uintptr(0); offset < size; offset += 8 {
 		var chunk uintptr
@@ -341,7 +341,7 @@ func copyStruct8ByteChunks(ptr unsafe.Pointer, size uintptr, addChunk func(uintp
 // 8-byte chunks, which works correctly for both register and stack placement.
 func placeRegistersDarwin(v reflect.Value, addFloat func(uintptr), addInt func(uintptr)) {
 	if !isDarwin {
-		panic("purego: placeRegistersDarwin should only be called on darwin")
+		panic("pure: placeRegistersDarwin should only be called on darwin")
 	}
 	// Check if this is an HFA/HVA
 	hfa := isHFA(v.Type())
@@ -411,7 +411,7 @@ func shouldBundleStackArgs(v reflect.Value, numInts, numFloats int) bool {
 // should go through normal register allocation or be bundled with stack args.
 func structFitsInRegisters(val reflect.Value, tempNumInts, tempNumFloats int) (bool, int, int) {
 	if !isDarwin {
-		panic("purego: structFitsInRegisters should only be called on darwin")
+		panic("pure: structFitsInRegisters should only be called on darwin")
 	}
 	hfa := isHFA(val.Type())
 	hva := isHVA(val.Type())
@@ -444,7 +444,7 @@ func collectStackArgs(args []reflect.Value, startIdx int, numInts, numFloats int
 	keepAlive []any, addInt, addFloat, addStack func(uintptr),
 	pNumInts, pNumFloats, pNumStack *int) ([]reflect.Value, []any) {
 	if !isDarwin {
-		panic("purego: collectStackArgs should only be called on darwin")
+		panic("pure: collectStackArgs should only be called on darwin")
 	}
 
 	var stackArgs []reflect.Value
@@ -501,7 +501,7 @@ const (
 // It creates a packed struct with proper alignment and copies it to the stack in 8-byte chunks.
 func bundleStackArgs(stackArgs []reflect.Value, addStack func(uintptr)) {
 	if !isDarwin {
-		panic("purego: bundleStackArgs should only be called on darwin")
+		panic("pure: bundleStackArgs should only be called on darwin")
 	}
 	if len(stackArgs) == 0 {
 		return
@@ -574,9 +574,9 @@ func bundleStackArgs(stackArgs []reflect.Value, addStack func(uintptr)) {
 //   - Darwin ARM64: byte-level packing on the stack
 func getCallbackStruct(inType reflect.Type, frame unsafe.Pointer, floatsN *int, intsN *int, stackSlot *int, stackByteOffset *uintptr) reflect.Value {
 	switch runtime.GOOS {
-	case "android", "darwin", "freebsd", "ios", "linux", "netbsd":
+	case "darwin", "freebsd", "linux", "netbsd":
 	default:
-		panic("purego: getCallbackStruct is not supported on " + runtime.GOOS)
+		panic("pure: getCallbackStruct is not supported on " + runtime.GOOS)
 	}
 
 	f := (*[callbackMaxFrame]uintptr)(frame)
@@ -694,7 +694,7 @@ func readHFAFromRegisters(inType reflect.Type, f *[callbackMaxFrame]uintptr, flo
 		*floatsN += 4
 		return reflect.NewAt(inType, unsafe.Pointer(&struct{ a, b, c, d uintptr }{r1, r2, r3, r4})).Elem()
 	default:
-		panic("purego: HFA with more than 4 fields is not supported")
+		panic("pure: HFA with more than 4 fields is not supported")
 	}
 }
 

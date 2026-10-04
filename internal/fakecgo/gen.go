@@ -31,7 +31,7 @@ package fakecgo
 
 {{- range $di := .DynamicImports }}
 {{- range $sym := $di.Symbols }}
-//go:cgo_import_dynamic purego_{{ $sym }} {{ $sym }} "{{ $di.Name }}"
+//go:cgo_import_dynamic pure_{{ $sym }} {{ $sym }} "{{ $di.Name }}"
 {{- end }}
 {{- end }}
 
@@ -95,7 +95,7 @@ var templateTrampolinesStubs = template.Must(template.New("trampolines").Parse(
 // these stubs are here because it is not possible to go:linkname directly the C functions
 {{ range .Symbols }}
 TEXT _{{.Name}}(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_{{.Name}}(SB)
+	JMP pure_{{.Name}}(SB)
 {{ end -}}
 `))
 

@@ -3,7 +3,7 @@
 
 //go:build !(ppc64le || s390x)
 
-package purego
+package pure
 
 import "unsafe"
 

@@ -49,10 +49,6 @@ func threadentry(v unsafe.Pointer) unsafe.Pointer {
 	ts := *(*ThreadStart)(v)
 	free(v)
 
-	// TODO: support ios
-	//#if TARGET_OS_IPHONE
-	//	darwin_arm_init_thread_exception_port();
-	//#endif
 	setg_trampoline(setg_func, uintptr(unsafe.Pointer(ts.g)))
 
 	callThreadEntryFn(ts.fn)
@@ -76,11 +72,4 @@ func x_cgo_init(g *G, setg uintptr) {
 	setg_func = setg
 	size = pthread_get_stacksize_np(pthread_self())
 	g.stacklo = uintptr(unsafe.Add(unsafe.Pointer(&size), -size+4096))
-
-	//TODO: support ios
-	//#if TARGET_OS_IPHONE
-	//	darwin_arm_init_mach_exception_handler();
-	//	darwin_arm_init_thread_exception_port();
-	//	init_working_dir();
-	//#endif
 }

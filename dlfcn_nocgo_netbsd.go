@@ -3,9 +3,9 @@
 
 //go:build !cgo
 
-package purego
+package pure
 
-//go:cgo_import_dynamic purego_dlopen dlopen "libc.so"
-//go:cgo_import_dynamic purego_dlsym dlsym "libc.so"
-//go:cgo_import_dynamic purego_dlerror dlerror "libc.so"
-//go:cgo_import_dynamic purego_dlclose dlclose "libc.so"
+//go:cgo_import_dynamic pure_dlopen dlopen "libc.so"
+//go:cgo_import_dynamic pure_dlsym dlsym "libc.so"
+//go:cgo_import_dynamic pure_dlerror dlerror "libc.so"
+//go:cgo_import_dynamic pure_dlclose dlclose "libc.so"

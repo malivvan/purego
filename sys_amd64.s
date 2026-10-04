@@ -123,7 +123,7 @@ TEXT syscallX(SB), NOSPLIT, $STACK_SIZE
 	MOVQ X1, syscallArgs_f2(DI) // f2
 
 #ifdef GOOS_darwin
-	CALL purego_error(SB)
+	CALL pure_error(SB)
 	MOVQ PTR_ADDRESS(SP), DI      // reload (DI clobbered by call)
 	MOVQ (AX), AX
 	MOVQ AX, syscallArgs_a3(DI) // save errno

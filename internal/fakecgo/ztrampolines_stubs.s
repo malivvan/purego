@@ -10,46 +10,46 @@
 // these stubs are here because it is not possible to go:linkname directly the C functions
 
 TEXT _malloc(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_malloc(SB)
+	JMP pure_malloc(SB)
 
 TEXT _free(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_free(SB)
+	JMP pure_free(SB)
 
 TEXT _setenv(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_setenv(SB)
+	JMP pure_setenv(SB)
 
 TEXT _unsetenv(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_unsetenv(SB)
+	JMP pure_unsetenv(SB)
 
 TEXT _sigfillset(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_sigfillset(SB)
+	JMP pure_sigfillset(SB)
 
 TEXT _nanosleep(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_nanosleep(SB)
+	JMP pure_nanosleep(SB)
 
 TEXT _abort(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_abort(SB)
+	JMP pure_abort(SB)
 
 TEXT _pthread_attr_init(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_pthread_attr_init(SB)
+	JMP pure_pthread_attr_init(SB)
 
 TEXT _pthread_create(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_pthread_create(SB)
+	JMP pure_pthread_create(SB)
 
 TEXT _pthread_detach(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_pthread_detach(SB)
+	JMP pure_pthread_detach(SB)
 
 TEXT _pthread_sigmask(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_pthread_sigmask(SB)
+	JMP pure_pthread_sigmask(SB)
 
 TEXT _pthread_mutex_lock(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_pthread_mutex_lock(SB)
+	JMP pure_pthread_mutex_lock(SB)
 
 TEXT _pthread_mutex_unlock(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_pthread_mutex_unlock(SB)
+	JMP pure_pthread_mutex_unlock(SB)
 
 TEXT _pthread_cond_broadcast(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_pthread_cond_broadcast(SB)
+	JMP pure_pthread_cond_broadcast(SB)
 
 TEXT _pthread_setspecific(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_pthread_setspecific(SB)
+	JMP pure_pthread_setspecific(SB)

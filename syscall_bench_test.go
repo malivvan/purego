@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2026 The Ebitengine Authors
 
-package purego_test
+package pure_test
 
 import (
 	"fmt"
@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ebitengine/purego"
-	"github.com/ebitengine/purego/internal/load"
+	"github.com/malivvan/appkit/pure"
+	"github.com/malivvan/appkit/pure/internal/load"
 )
 
 // BenchmarkCallingMethods compares RegisterFunc, SyscallN, and Callback methods
@@ -56,7 +56,7 @@ func BenchmarkCallingMethods(b *testing.B) {
 
 	// Create callbacks and load C functions
 	for i := range testCases {
-		testCases[i].goFnPtr = purego.NewCallback(testCases[i].goFn)
+		testCases[i].goFnPtr = pure.NewCallback(testCases[i].goFn)
 
 		cFn, err := load.OpenSymbol(libHandle, testCases[i].cFnName)
 		if err != nil {
@@ -76,7 +76,7 @@ func BenchmarkCallingMethods(b *testing.B) {
 			b.Run(fmt.Sprintf("%dargs", tc.n), func(b *testing.B) {
 				b.ReportAllocs()
 				registerFn := makeRegisterFunc(tc.n)
-				purego.RegisterFunc(registerFn, tc.goFnPtr)
+				pure.RegisterFunc(registerFn, tc.goFnPtr)
 
 				b.ResetTimer()
 				result := callRegisterFunc(registerFn, tc.n, tc.args, b.N)
@@ -95,7 +95,7 @@ func BenchmarkCallingMethods(b *testing.B) {
 			b.Run(fmt.Sprintf("%dargs", tc.n), func(b *testing.B) {
 				b.ReportAllocs()
 				registerFn := makeRegisterFunc(tc.n)
-				purego.RegisterFunc(registerFn, tc.cFnPtr)
+				pure.RegisterFunc(registerFn, tc.cFnPtr)
 
 				b.ResetTimer()
 				result := callRegisterFunc(registerFn, tc.n, tc.args, b.N)
@@ -117,7 +117,7 @@ func BenchmarkCallingMethods(b *testing.B) {
 				var result uintptr
 				b.ResetTimer()
 				for range b.N {
-					result, _, _ = purego.SyscallN(tc.goFnPtr, args...)
+					result, _, _ = pure.SyscallN(tc.goFnPtr, args...)
 				}
 				b.StopTimer()
 				if int64(result) != tc.expectedSum {
@@ -136,7 +136,7 @@ func BenchmarkCallingMethods(b *testing.B) {
 				var result uintptr
 				b.ResetTimer()
 				for range b.N {
-					result, _, _ = purego.SyscallN(tc.cFnPtr, args...)
+					result, _, _ = pure.SyscallN(tc.cFnPtr, args...)
 				}
 				b.StopTimer()
 				if int64(result) != tc.expectedSum {
@@ -166,7 +166,7 @@ func BenchmarkCallingMethods(b *testing.B) {
 				var result uintptr
 				b.ResetTimer()
 				for range b.N {
-					result, _, _ = purego.SyscallN(tc.cCallbackPtr, callbackArgs...)
+					result, _, _ = pure.SyscallN(tc.cCallbackPtr, callbackArgs...)
 				}
 				b.StopTimer()
 				if int64(result) != tc.expectedSum {

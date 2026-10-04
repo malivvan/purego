@@ -50,7 +50,7 @@ int32_t callCallback10Int32(const void *fp) {
 }
 
 // Test: 10 float64 arguments - fills 8 float registers, then 2 go to stack
-// Callback returns int64 since purego callbacks don't support float returns
+// Callback returns int64 since pure callbacks don't support float returns
 typedef int64_t (*callback_10_float64)(double, double, double, double,
                                         double, double, double, double,
                                         double, double);
@@ -60,7 +60,7 @@ int64_t callCallback10Float64(const void *fp) {
 }
 
 // Test: 12 float32 arguments - fills 8 float registers, then 4 go to stack
-// Callback returns int64 since purego callbacks don't support float returns
+// Callback returns int64 since pure callbacks don't support float returns
 typedef int64_t (*callback_12_float32)(float, float, float, float,
                                         float, float, float, float,
                                         float, float, float, float);

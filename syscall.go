@@ -3,7 +3,7 @@
 
 //go:build !386 && !arm && !ppc64le && (darwin || freebsd || linux || netbsd || windows)
 
-package purego
+package pure
 
 import (
 	"runtime"
@@ -55,7 +55,7 @@ func syscall_SyscallN(fn uintptr, sysargs []uintptr, floats []uintptr, r8 uintpt
 // especially point 4.
 //
 // NOTE: SyscallN does not properly call functions that have both integer and float parameters.
-// See discussion comment https://github.com/ebiten/purego/pull/1#issuecomment-1128057607
+// See discussion comment https://github.com/ebiten/pure/pull/1#issuecomment-1128057607
 // for an explanation of why that is.
 //
 // On amd64, if there are more than 8 floats the 9th and so on will be placed incorrectly on the
@@ -68,10 +68,10 @@ func syscall_SyscallN(fn uintptr, sysargs []uintptr, floats []uintptr, r8 uintpt
 //go:uintptrescapes
 func SyscallN(fn uintptr, args ...uintptr) (r1, r2, err uintptr) {
 	if fn == 0 {
-		panic("purego: fn is nil")
+		panic("pure: fn is nil")
 	}
 	if len(args) > maxArgs {
-		panic("purego: too many arguments to SyscallN")
+		panic("pure: too many arguments to SyscallN")
 	}
 
 	// Windows uses syscall.SyscallN in syscall_windows.go.

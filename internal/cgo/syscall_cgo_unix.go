@@ -5,7 +5,7 @@
 
 package cgo
 
-// this file is placed inside internal/cgo and not package purego
+// this file is placed inside internal/cgo and not package pure
 // because Cgo and assembly files can't be in the same package.
 
 /*
@@ -45,5 +45,5 @@ void syscall15(struct syscallArgs *args) {
 import "C"
 import "unsafe"
 
-// assign purego.syscallXABI0 to the C version of this function.
+// assign pure.syscallXABI0 to the C version of this function.
 var SyscallXABI0 = unsafe.Pointer(C.syscall15)

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2022 The Ebitengine Authors
 
-//go:build (darwin || freebsd || linux || netbsd) && !android && !faketime
+//go:build (darwin || freebsd || linux || netbsd) && !faketime
 
-package purego
+package pure
 
 import (
 	"unsafe"

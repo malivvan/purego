@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2023 The Ebitengine Authors
 
-package purego_test
+package pure_test
 
 import (
 	"os"
@@ -9,8 +9,8 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/ebitengine/purego"
-	"github.com/ebitengine/purego/internal/load"
+	"github.com/malivvan/appkit/pure"
+	"github.com/malivvan/appkit/pure/internal/load"
 )
 
 func TestOS(t *testing.T) {
@@ -40,13 +40,13 @@ func TestErrno(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	r1, _, errno := purego.SyscallN(openSym, uintptr(unsafe.Pointer(&[]byte("_file_that_does_not_exist_\x00")[0])), uintptr(os.O_RDWR))
+	r1, _, errno := pure.SyscallN(openSym, uintptr(unsafe.Pointer(&[]byte("_file_that_does_not_exist_\x00")[0])), uintptr(os.O_RDWR))
 	if int32(r1) != -1 {
 		t.Errorf("open returned %d, wanted -1", r1)
 	}
 
 	var strerror func(int32) string
-	purego.RegisterLibFunc(&strerror, libc, "strerror")
+	pure.RegisterLibFunc(&strerror, libc, "strerror")
 
 	const expected = "No such file or directory"
 	got := strerror(int32(errno))

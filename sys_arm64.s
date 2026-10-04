@@ -124,7 +124,7 @@ TEXT syscallX(SB), NOSPLIT, $0
 	FMOVD F3, syscallArgs_f4(R2) // save f3
 
 #ifdef GOOS_darwin
-	BL   purego_error(SB)
+	BL   pure_error(SB)
 	MOVD (R0), R0
 	MOVD R0, syscallArgs_a3(R2) // save errno
 

@@ -3,7 +3,7 @@
 
 //go:build darwin || freebsd || linux || netbsd || windows
 
-package purego
+package pure
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/ebitengine/purego/internal/strings"
+	"github.com/malivvan/appkit/pure/internal/strings"
 )
 
 const (
@@ -68,7 +68,7 @@ func RegisterLibFunc(fptr any, handle uintptr, name string) {
 //	int64 <=> int64_t
 //	float32 <=> float
 //	float64 <=> double
-//	struct <=> struct (android, darwin, ios, linux, and windows on amd64/arm64)
+//	struct <=> struct (darwin, linux, and windows on amd64/arm64)
 //	func <=> C function
 //	unsafe.Pointer, *T <=> void*
 //	[]T => void*
@@ -80,19 +80,19 @@ func RegisterLibFunc(fptr any, handle uintptr, name string) {
 //
 // # Memory
 //
-// In general it is not possible for purego to guarantee the lifetimes of objects returned or received from
+// In general it is not possible for pure to guarantee the lifetimes of objects returned or received from
 // calling functions using RegisterFunc. For arguments to a C function it is important that the C function doesn't
 // hold onto a reference to Go memory. This is the same as the [Cgo rules].
 //
 // However, there are some special cases. When passing a string as an argument if the string does not end in a null
-// terminated byte (\x00) then the string will be copied into memory maintained by purego. The memory is only valid for
+// terminated byte (\x00) then the string will be copied into memory maintained by pure. The memory is only valid for
 // that specific call. Therefore, if the C code keeps a reference to that string it may become invalid at some
 // undefined time. However, if the string does already contain a null-terminated byte then no copy is done.
 // It is then the responsibility of the caller to ensure the string stays alive as long as it's needed in C memory.
 // This can be done using runtime.KeepAlive or allocating the string in C memory using malloc. When a C function
 // returns a null-terminated pointer to char a Go string can be used. Purego will allocate a new string in Go memory
 // and copy the data over. This string will be garbage collected whenever Go decides it's no longer referenced.
-// This C created string will not be freed by purego. If the pointer to char is not null-terminated or must continue
+// This C created string will not be freed by pure. If the pointer to char is not null-terminated or must continue
 // to point to C memory (because it's a buffer for example) then use a pointer to byte and then convert that to a slice
 // using unsafe.Slice. Doing this means that it becomes the responsibility of the caller to care about the lifetime
 // of the pointer
@@ -103,8 +103,9 @@ func RegisterLibFunc(fptr any, handle uintptr, name string) {
 // it does not support aligning fields properly. It is therefore the responsibility of the caller to ensure
 // that all padding is added to the Go struct to match the C one. See `BoolStructFn` in struct_test.go for an example.
 //
-// On Apple ARM64 platforms (macOS and iOS), purego handles proper alignment of struct arguments
-// when passing them on the stack, following the C ABI's byte-level packing rules.
+// On macOS on Apple silicon (arm64), pure handles proper alignment of struct
+// arguments when passing them on the stack, following the C ABI's byte-level
+// packing rules.
 //
 // On Windows, struct arguments and returns are supported on amd64 and arm64 when calling C functions.
 // Passing or returning structs in callbacks created with [NewCallback] is not supported on Windows.
@@ -115,7 +116,7 @@ func RegisterLibFunc(fptr any, handle uintptr, name string) {
 //
 //	char *foo(char *str);
 //
-//	// Let purego convert types
+//	// Let pure convert types
 //	var foo func(s string) string
 //	goString := foo("copied")
 //	// Go will garbage collect this string
@@ -131,17 +132,17 @@ func RegisterFunc(fptr any, cfn uintptr) {
 	fn := reflect.ValueOf(fptr).Elem()
 	ty := fn.Type()
 	if ty.Kind() != reflect.Func {
-		panic("purego: fptr must be a function pointer")
+		panic("pure: fptr must be a function pointer")
 	}
 	if ty.NumOut() > 1 {
-		panic("purego: function can only return zero or one values")
+		panic("pure: function can only return zero or one values")
 	}
 	if cfn == 0 {
-		panic("purego: cfn is nil")
+		panic("pure: cfn is nil")
 	}
 	if ty.NumOut() == 1 && (ty.Out(0).Kind() == reflect.Float32 || ty.Out(0).Kind() == reflect.Float64) &&
 		runtime.GOARCH != "arm" && runtime.GOARCH != "arm64" && runtime.GOARCH != "386" && runtime.GOARCH != "amd64" && runtime.GOARCH != "loong64" && runtime.GOARCH != "ppc64le" && runtime.GOARCH != "riscv64" && runtime.GOARCH != "s390x" {
-		panic("purego: float returns are not supported")
+		panic("pure: float returns are not supported")
 	}
 	{
 		// this code checks how many registers and stack this function will use
@@ -164,7 +165,7 @@ func RegisterFunc(fptr any, cfn uintptr) {
 						continue
 					}
 					if j != 0 {
-						panic("purego: CDecl must be the first argument")
+						panic("pure: CDecl must be the first argument")
 					}
 				}
 			case reflect.String, reflect.Uintptr, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32,
@@ -226,7 +227,7 @@ func RegisterFunc(fptr any, cfn uintptr) {
 				}
 				_ = addStruct(reflect.New(arg).Elem(), &ints, &floats, &stack, addInt, addFloat, addStack, nil)
 			default:
-				panic("purego: unsupported kind " + arg.Kind().String())
+				panic("pure: unsupported kind " + arg.Kind().String())
 			}
 		}
 		if ty.NumOut() == 1 && ty.Out(0).Kind() == reflect.Struct {
@@ -250,7 +251,7 @@ func RegisterFunc(fptr any, cfn uintptr) {
 		sizeOfStack := argsLimit - numOfIntegerRegisters()
 		if runtime.GOOS == "windows" {
 			if ints+floats+stack > argsLimit {
-				panic("purego: too many stack arguments")
+				panic("pure: too many stack arguments")
 			}
 		} else if isDarwin && runtime.GOARCH == "arm64" {
 			// On Darwin ARM64, use byte-based validation since arguments pack efficiently.
@@ -258,11 +259,11 @@ func RegisterFunc(fptr any, cfn uintptr) {
 			stackBytes := estimateStackBytes(ty)
 			maxStackBytes := sizeOfStack * 8
 			if stackBytes > maxStackBytes {
-				panic("purego: too many stack arguments")
+				panic("pure: too many stack arguments")
 			}
 		} else {
 			if stack > sizeOfStack {
-				panic("purego: too many stack arguments")
+				panic("pure: too many stack arguments")
 			}
 		}
 	}
@@ -308,7 +309,7 @@ func RegisterFunc(fptr any, cfn uintptr) {
 			// tries to use as many registers as possible in the calling convention.
 			addStack = func(x uintptr) {
 				if numStack >= maxArgs {
-					panic("purego: too many stack arguments")
+					panic("pure: too many stack arguments")
 				}
 				sysargs[numStack] = x
 				numStack++
@@ -344,7 +345,7 @@ func RegisterFunc(fptr any, cfn uintptr) {
 		for i, v := range args {
 			if variadic, ok := reflect.TypeAssert[[]any](args[i]); ok {
 				if i != len(args)-1 {
-					panic("purego: can only expand last parameter")
+					panic("pure: can only expand last parameter")
 				}
 				for _, x := range variadic {
 					keepAlive = addValue(reflect.ValueOf(x), keepAlive, addInt, addFloat, addStack, &numInts, &numFloats, &numStack)
@@ -453,7 +454,7 @@ func RegisterFunc(fptr any, cfn uintptr) {
 		case reflect.Struct:
 			v = getStruct(outType, *syscall)
 		default:
-			panic("purego: unsupported return kind: " + outType.Kind().String())
+			panic("pure: unsupported return kind: " + outType.Kind().String())
 		}
 		if len(args) > 0 {
 			// reuse args slice instead of allocating one when possible
@@ -544,7 +545,7 @@ func addValue(v reflect.Value, keepAlive []any, addInt func(x uintptr), addFloat
 	case reflect.Struct:
 		keepAlive = addStruct(v, numInts, numFloats, numStack, addInt, addFloat, addStack, keepAlive)
 	default:
-		panic("purego: unsupported kind: " + v.Kind().String())
+		panic("pure: unsupported kind: " + v.Kind().String())
 	}
 	return keepAlive
 }
@@ -588,7 +589,7 @@ func abiField(ty reflect.Type, i int) reflect.StructField {
 		}
 		i--
 	}
-	panic("purego: struct field index out of range")
+	panic("pure: struct field index out of range")
 }
 
 func isAllSameFloat(ty reflect.Type) (allFloats bool, numFields int) {
@@ -644,7 +645,7 @@ func checkStructFieldsSupported(ty reflect.Type) {
 			reflect.Uintptr, reflect.Pointer, reflect.UnsafePointer, reflect.Float64, reflect.Float32,
 			reflect.Bool:
 		default:
-			panic(fmt.Sprintf("purego: struct field type %s is not supported", f))
+			panic(fmt.Sprintf("pure: struct field type %s is not supported", f))
 		}
 	}
 }
@@ -655,12 +656,12 @@ func ensureStructSupported() {
 	switch runtime.GOARCH {
 	case "amd64", "arm64", "loong64", "ppc64le":
 	default:
-		panic("purego: struct arguments/returns are only supported on amd64, arm64, loong64, and ppc64le")
+		panic("pure: struct arguments/returns are only supported on amd64, arm64, loong64, and ppc64le")
 	}
 	switch runtime.GOOS {
-	case "android", "darwin", "ios", "linux", "windows":
+	case "darwin", "linux", "windows":
 	default:
-		panic("purego: struct arguments/returns are only supported on android, darwin, ios, linux, and windows")
+		panic("pure: struct arguments/returns are only supported on darwin, linux, and windows")
 	}
 }
 
@@ -669,18 +670,17 @@ func ensureStructSupported() {
 // fewer architectures than a direct call to a C function.
 func ensureCallbackStructSupported() {
 	if runtime.GOARCH != "amd64" && runtime.GOARCH != "arm64" {
-		panic("purego: struct arguments/returns in callbacks are only supported on amd64 and arm64")
+		panic("pure: struct arguments/returns in callbacks are only supported on amd64 and arm64")
 	}
 	switch runtime.GOOS {
-	case "android", "darwin", "ios", "linux", "windows":
+	case "darwin", "linux", "windows":
 	default:
-		panic("purego: struct arguments/returns in callbacks are only supported on android, darwin, ios, linux, and windows")
+		panic("pure: struct arguments/returns in callbacks are only supported on darwin, linux, and windows")
 	}
 }
 
-// isDarwin is true on platforms that use Apple's calling convention.
-// iOS (GOOS=ios) shares it with macOS (GOOS=darwin).
-const isDarwin = runtime.GOOS == "darwin" || runtime.GOOS == "ios"
+// isDarwin is true on macOS, which uses Apple's calling convention.
+const isDarwin = runtime.GOOS == "darwin"
 
 func roundUpTo8(val uintptr) uintptr {
 	return (val + align8ByteMask) &^ align8ByteMask

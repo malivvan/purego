@@ -6,9 +6,9 @@ package cstrings
 import (
 	"fmt"
 
-	"github.com/ebitengine/purego"
-	"github.com/ebitengine/purego/internal/strings"
-	"github.com/ebitengine/purego/objc"
+	"github.com/malivvan/appkit/pure"
+	"github.com/malivvan/appkit/pure/internal/strings"
+	"github.com/malivvan/appkit/pure/objc"
 )
 
 var (
@@ -20,7 +20,7 @@ var (
 
 func init() {
 	// Must pull in Foundation to get the NSString class.
-	_, err := purego.Dlopen("/System/Library/Frameworks/Foundation.framework/Foundation", purego.RTLD_GLOBAL|purego.RTLD_NOW)
+	_, err := pure.Dlopen("/System/Library/Frameworks/Foundation.framework/Foundation", pure.RTLD_GLOBAL|pure.RTLD_NOW)
 	if err != nil {
 		panic(fmt.Errorf("cstrings: %w", err))
 	}

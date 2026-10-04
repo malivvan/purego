@@ -3,7 +3,7 @@
 
 //go:build (darwin || linux || windows) && (amd64 || arm64 || loong64 || ppc64le)
 
-package purego_test
+package pure_test
 
 import (
 	"iter"
@@ -17,8 +17,8 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/ebitengine/purego"
-	"github.com/ebitengine/purego/internal/load"
+	"github.com/malivvan/appkit/pure"
+	"github.com/malivvan/appkit/pure/internal/load"
 )
 
 func TestRegisterFunc_structArgs(t *testing.T) {
@@ -57,7 +57,7 @@ func TestRegisterFunc_structArgs(t *testing.T) {
 		{
 			name: "RegisterLibFunc",
 			register: func(fptr any, handle uintptr, name string, _ any) {
-				purego.RegisterLibFunc(fptr, handle, name)
+				pure.RegisterLibFunc(fptr, handle, name)
 			},
 		},
 		{
@@ -70,11 +70,11 @@ func TestRegisterFunc_structArgs(t *testing.T) {
 					if kind == reflect.Float32 || kind == reflect.Float64 {
 						// NewCallback doesn't support float returns.
 						// Float struct args are covered by identity tests that return structs.
-						purego.RegisterLibFunc(fptr, handle, name)
+						pure.RegisterLibFunc(fptr, handle, name)
 						return
 					}
 				}
-				purego.RegisterFunc(fptr, purego.NewCallback(goFn))
+				pure.RegisterFunc(fptr, pure.NewCallback(goFn))
 			},
 		},
 	}
@@ -613,7 +613,7 @@ func TestRegisterFunc_structArgs(t *testing.T) {
 				type BoolFloat struct {
 					_ structs.HostLayout
 					b bool
-					_ [3]byte // purego won't do padding for you so make sure it aligns properly with C struct
+					_ [3]byte // pure won't do padding for you so make sure it aligns properly with C struct
 					f float32
 				}
 				var BoolFloatFn func(BoolFloat) float32
@@ -892,7 +892,7 @@ func TestRegisterFunc_structArgs(t *testing.T) {
 			}
 			if runtime.GOARCH != "ppc64le" {
 				// Struct arg after some primitive args: register offset correctness.
-				// ppc64le is skipped: a float argument shadows a GPR, which purego
+				// ppc64le is skipped: a float argument shadows a GPR, which pure
 				// does not model for scalars, so the trailing struct is misplaced.
 				type IntLessThan16Bytes struct {
 					_    structs.HostLayout
@@ -993,7 +993,7 @@ func TestRegisterFunc_structReturns(t *testing.T) {
 	}{
 		{
 			name:     "RegisterLibFunc",
-			register: purego.RegisterLibFunc,
+			register: pure.RegisterLibFunc,
 		},
 		{
 			name:          "GoCallbackFunc",
@@ -1005,13 +1005,13 @@ func TestRegisterFunc_structReturns(t *testing.T) {
 					leaves := slices.Collect(fields(ret))
 					for i, a := range args {
 						if i >= len(leaves) {
-							panic("purego: no more fields")
+							panic("pure: no more fields")
 						}
 						leaves[i].Set(a)
 					}
 					return []reflect.Value{ret}
 				})
-				purego.RegisterFunc(fptr, purego.NewCallback(fn.Interface()))
+				pure.RegisterFunc(fptr, pure.NewCallback(fn.Interface()))
 			},
 		},
 	}
@@ -1291,7 +1291,7 @@ func TestRegisterFunc_structReturns(t *testing.T) {
 			}
 
 			if runtime.GOARCH != "ppc64le" {
-				// ppc64le is skipped: a float argument shadows a GPR, which purego
+				// ppc64le is skipped: a float argument shadows a GPR, which pure
 				// does not model for scalars, so a trailing integer arg is misplaced.
 				// TODO: Support mixed scalar floating-point and integer arguments on
 				// ppc64le by modeling the ELFv2 general-purpose register shadowing.
@@ -1381,7 +1381,7 @@ func TestRegisterFunc_structReturns(t *testing.T) {
 				// The GoCallbackFunc register helper decomposes args into struct fields,
 				// which doesn't work for identity functions with struct args.
 				// Struct callback args are tested in TestRegisterFunc_structArgs.
-				purego.RegisterLibFunc(&IdentityMixed5, lib, "IdentityMixed5")
+				pure.RegisterLibFunc(&IdentityMixed5, lib, "IdentityMixed5")
 				ptr := new(int64)
 				expected := Mixed5{A: ptr, B: 1, C: 7.2, D: 9}
 				if ret := IdentityMixed5(expected); ret != expected {
@@ -1425,7 +1425,7 @@ func TestRegisterFunc_structReturns(t *testing.T) {
 					b unsafe.Pointer
 				}
 				var ReturnPtr1 func(a *int64, b unsafe.Pointer) Ptr1
-				purego.RegisterLibFunc(&ReturnPtr1, lib, "ReturnPtr1")
+				pure.RegisterLibFunc(&ReturnPtr1, lib, "ReturnPtr1")
 				a, b := new(int64), new(struct{})
 				expected := Ptr1{a: a, b: unsafe.Pointer(b)}
 				if ret := ReturnPtr1(a, unsafe.Pointer(b)); ret != expected {

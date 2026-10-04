@@ -3,11 +3,10 @@
 
 //go:build !cgo && (darwin || freebsd || linux || netbsd)
 
-package purego
+package pure
 
 // if CGO_ENABLED=0 import fakecgo to setup the Cgo runtime correctly.
 // This is required since some frameworks need TLS setup the C way which Go doesn't do.
-// We currently don't support ios in fakecgo mode so force Cgo or fail
 //
 // The way that the Cgo runtime (runtime/cgo) works is by setting some variables found
 // in runtime with non-null GCC compiled functions. The variables that are replaced are
@@ -22,4 +21,4 @@ package purego
 // importing fakecgo will set these (using //go:linkname) with functions written
 // entirely in Go (except for some assembly trampolines to change GCC ABI to Go ABI).
 // Doing so makes it possible to build applications that call into C without CGO_ENABLED=1.
-import _ "github.com/ebitengine/purego/internal/fakecgo"
+import _ "github.com/malivvan/appkit/pure/internal/fakecgo"

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2024 The Ebitengine Authors
 
-package purego
+package pure
 
 import (
 	"math"
@@ -291,7 +291,7 @@ func tryPlaceRegister(v reflect.Value, addFloat func(uintptr), addInt func(uintp
 			case reflect.Array:
 				place(f)
 			default:
-				panic("purego: unsupported kind " + f.Kind().String())
+				panic("pure: unsupported kind " + f.Kind().String())
 			}
 
 			if shift == 64 {
@@ -299,7 +299,7 @@ func tryPlaceRegister(v reflect.Value, addFloat func(uintptr), addInt func(uintp
 			} else if shift > 64 {
 				// Should never happen, but may if we forget to reset shift after flush (or forget to flush),
 				// better fall apart here, than corrupt arguments.
-				panic("purego: tryPlaceRegisters shift > 64")
+				panic("pure: tryPlaceRegisters shift > 64")
 			}
 		}
 	}
@@ -330,7 +330,7 @@ func placeStack(v reflect.Value, addStack func(uintptr)) {
 }
 
 func placeRegisters(v reflect.Value, addFloat func(uintptr), addInt func(uintptr)) {
-	panic("purego: placeRegisters not implemented on amd64")
+	panic("pure: placeRegisters not implemented on amd64")
 }
 
 // shouldBundleStackArgs always returns false on non-Darwin platforms
@@ -341,19 +341,19 @@ func shouldBundleStackArgs(v reflect.Value, numInts, numFloats int) bool {
 
 // structFitsInRegisters is not used on amd64.
 func structFitsInRegisters(val reflect.Value, tempNumInts, tempNumFloats int) (bool, int, int) {
-	panic("purego: structFitsInRegisters should not be called on amd64")
+	panic("pure: structFitsInRegisters should not be called on amd64")
 }
 
 // collectStackArgs is not used on amd64.
 func collectStackArgs(args []reflect.Value, startIdx int, numInts, numFloats int,
 	keepAlive []any, addInt, addFloat, addStack func(uintptr),
 	pNumInts, pNumFloats, pNumStack *int) ([]reflect.Value, []any) {
-	panic("purego: collectStackArgs should not be called on amd64")
+	panic("pure: collectStackArgs should not be called on amd64")
 }
 
 // bundleStackArgs is not used on amd64.
 func bundleStackArgs(stackArgs []reflect.Value, addStack func(uintptr)) {
-	panic("purego: bundleStackArgs should not be called on amd64")
+	panic("pure: bundleStackArgs should not be called on amd64")
 }
 
 // getCallbackStruct reads a struct argument from the callback frame on amd64.
@@ -369,9 +369,9 @@ func bundleStackArgs(stackArgs []reflect.Value, addStack func(uintptr)) {
 //   - If not enough registers for all eightbytes: entire struct goes on the stack
 func getCallbackStruct(inType reflect.Type, frame unsafe.Pointer, floatsN *int, intsN *int, stackSlot *int, stackByteOffset *uintptr) reflect.Value {
 	switch runtime.GOOS {
-	case "android", "darwin", "freebsd", "ios", "linux", "netbsd":
+	case "darwin", "freebsd", "linux", "netbsd":
 	default:
-		panic("purego: getCallbackStruct is not supported on " + runtime.GOOS)
+		panic("pure: getCallbackStruct is not supported on " + runtime.GOOS)
 	}
 
 	f := (*[callbackMaxFrame]uintptr)(frame)

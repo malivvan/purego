@@ -3,7 +3,7 @@
 
 //go:build darwin || freebsd || (linux && (386 || amd64 || arm || arm64 || loong64 || ppc64le || riscv64 || (s390x && (cgo || go1.27)))) || netbsd
 
-package purego
+package pure
 
 import (
 	"math"
@@ -16,7 +16,7 @@ import (
 var syscallXABI0 uintptr
 
 func syscall_syscallN(fn uintptr, args ...uintptr) (r1, r2, err uintptr) {
-	panic("purego: syscall_syscallN is only supported on windows")
+	panic("pure: syscall_syscallN is only supported on windows")
 }
 
 // NewCallback converts a Go function to a function pointer conforming to the C calling convention.
@@ -33,7 +33,7 @@ func NewCallback(fn any) uintptr {
 			continue
 		}
 		if i != 0 {
-			panic("purego: CDecl must be the first argument")
+			panic("pure: CDecl must be the first argument")
 		}
 	}
 	return compileCallback(fn)
@@ -52,10 +52,10 @@ var cbs struct {
 func compileCallback(fn any) uintptr {
 	val := reflect.ValueOf(fn)
 	if val.Kind() != reflect.Func {
-		panic("purego: the type must be a function but was not")
+		panic("pure: the type must be a function but was not")
 	}
 	if val.IsNil() {
-		panic("purego: function must not be nil")
+		panic("pure: function must not be nil")
 	}
 	ty := val.Type()
 	for i := range ty.NumIn() {
@@ -71,7 +71,7 @@ func compileCallback(fn any) uintptr {
 		case reflect.Interface, reflect.Func, reflect.Slice,
 			reflect.Chan, reflect.Complex64, reflect.Complex128,
 			reflect.String, reflect.Map, reflect.Invalid:
-			panic("purego: unsupported argument type: " + in.Kind().String())
+			panic("pure: unsupported argument type: " + in.Kind().String())
 		}
 	}
 output:
@@ -87,14 +87,14 @@ output:
 			reflect.Bool, reflect.UnsafePointer:
 			break output
 		}
-		panic("purego: unsupported return type: " + ty.String())
+		panic("pure: unsupported return type: " + ty.String())
 	case ty.NumOut() > 1:
-		panic("purego: callbacks can only have one return")
+		panic("pure: callbacks can only have one return")
 	}
 	cbs.lock.Lock()
 	defer cbs.lock.Unlock()
 	if cbs.numFn >= maxCB {
-		panic("purego: the maximum number of callbacks has been reached")
+		panic("pure: the maximum number of callbacks has been reached")
 	}
 	cbs.funcs[cbs.numFn] = val
 	cbs.numFn++
@@ -299,7 +299,7 @@ func callbackWrap(a *callbackArgs) {
 		case reflect.Struct:
 			setStruct(a, ret[0])
 		default:
-			panic("purego: unsupported kind: " + k.String())
+			panic("pure: unsupported kind: " + k.String())
 		}
 	}
 }
@@ -373,7 +373,7 @@ func callbackasmAddr(i int) uintptr {
 	var entrySize int
 	switch runtime.GOARCH {
 	default:
-		panic("purego: unsupported architecture")
+		panic("pure: unsupported architecture")
 	case "amd64":
 		// On amd64, each callback entry is just a CALL instruction (5 bytes)
 		entrySize = 5

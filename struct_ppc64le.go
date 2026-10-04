@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2026 The Ebitengine Authors
 
-package purego
+package pure
 
 import (
 	"math"
@@ -163,18 +163,18 @@ func shouldBundleStackArgs(v reflect.Value, numInts, numFloats int) bool {
 func collectStackArgs(args []reflect.Value, startIdx int, numInts, numFloats int,
 	keepAlive []any, addInt, addFloat, addStack func(uintptr),
 	pNumInts, pNumFloats, pNumStack *int) ([]reflect.Value, []any) {
-	panic("purego: collectStackArgs should not be called on ppc64le")
+	panic("pure: collectStackArgs should not be called on ppc64le")
 }
 
 // bundleStackArgs is not used on ppc64le.
 func bundleStackArgs(stackArgs []reflect.Value, addStack func(uintptr)) {
-	panic("purego: bundleStackArgs should not be called on ppc64le")
+	panic("pure: bundleStackArgs should not be called on ppc64le")
 }
 
 func getCallbackStruct(inType reflect.Type, frame unsafe.Pointer, floatsN *int, intsN *int, stackSlot *int, stackByteOffset *uintptr) reflect.Value {
-	panic("purego: struct callback arguments are not supported on ppc64le")
+	panic("pure: struct callback arguments are not supported on ppc64le")
 }
 
 func setStruct(a *callbackArgs, ret reflect.Value) {
-	panic("purego: struct returns are not supported on ppc64le")
+	panic("pure: struct returns are not supported on ppc64le")
 }

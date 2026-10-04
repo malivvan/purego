@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2023 The Ebitengine Authors
 
-package purego_test
+package pure_test
 
 import (
 	"bytes"
@@ -20,15 +20,13 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/ebitengine/purego"
-	"github.com/ebitengine/purego/internal/load"
+	"github.com/malivvan/appkit/pure"
+	"github.com/malivvan/appkit/pure/internal/load"
 )
 
 func getSystemLibrary() (string, error) {
 	switch runtime.GOOS {
-	case "android":
-		return "libc.so", nil
-	case "darwin", "ios":
+	case "darwin":
 		return "/usr/lib/libSystem.B.dylib", nil
 	case "freebsd":
 		return "libc.so.7", nil
@@ -55,8 +53,8 @@ func TestRegisterFunc_ConcurrentPointerReturn(t *testing.T) {
 
 	var alloc func(uint64) *byte
 	var free func(*byte)
-	purego.RegisterLibFunc(&alloc, libc, "malloc")
-	purego.RegisterLibFunc(&free, libc, "free")
+	pure.RegisterLibFunc(&alloc, libc, "malloc")
+	pure.RegisterLibFunc(&free, libc, "free")
 
 	var wg sync.WaitGroup
 
@@ -87,7 +85,7 @@ func TestRegisterFunc(t *testing.T) {
 		t.Fatalf("failed to dlopen: %s", err)
 	}
 	var puts func(string)
-	purego.RegisterLibFunc(&puts, libc, "puts")
+	pure.RegisterLibFunc(&puts, libc, "puts")
 	puts("Calling C from from Go without Cgo!")
 }
 
@@ -107,11 +105,11 @@ func Test_qsort(t *testing.T) {
 
 	data := []int{88, 56, 100, 2, 25}
 	sorted := []int{2, 25, 56, 88, 100}
-	compare := func(_ purego.CDecl, a, b *int) int {
+	compare := func(_ pure.CDecl, a, b *int) int {
 		return *a - *b
 	}
-	var qsort func(data []int, nitms uintptr, size uintptr, compar func(_ purego.CDecl, a, b *int) int)
-	purego.RegisterLibFunc(&qsort, libc, "qsort")
+	var qsort func(data []int, nitms uintptr, size uintptr, compar func(_ pure.CDecl, a, b *int) int)
+	pure.RegisterLibFunc(&qsort, libc, "qsort")
 	qsort(data, uintptr(len(data)), unsafe.Sizeof(int(0)), compare)
 	for i := range data {
 		if data[i] != sorted[i] {
@@ -138,7 +136,7 @@ func TestRegisterFunc_Floats(t *testing.T) {
 	}
 	{
 		var strtof func(arg string) float32
-		purego.RegisterLibFunc(&strtof, libc, "strtof")
+		pure.RegisterLibFunc(&strtof, libc, "strtof")
 		const (
 			arg = "2"
 		)
@@ -150,7 +148,7 @@ func TestRegisterFunc_Floats(t *testing.T) {
 	}
 	{
 		var strtod func(arg string, ptr **byte) float64
-		purego.RegisterLibFunc(&strtod, libc, "strtod")
+		pure.RegisterLibFunc(&strtod, libc, "strtod")
 		const (
 			arg = "1"
 		)
@@ -169,12 +167,12 @@ func TestRegisterLibFunc_Bool(t *testing.T) {
 	}
 	// this callback recreates the state where the return register
 	// contains other information but the least significant byte is false
-	cbFalse := purego.NewCallback(func() uintptr {
+	cbFalse := pure.NewCallback(func() uintptr {
 		x := uint64(0x7F5948AE9A00)
 		return uintptr(x)
 	})
 	var runFalse func() bool
-	purego.RegisterFunc(&runFalse, cbFalse)
+	pure.RegisterFunc(&runFalse, cbFalse)
 	expected := false
 	if got := runFalse(); got != expected {
 		t.Errorf("runFalse failed. got %t but wanted %t", got, expected)
@@ -202,7 +200,7 @@ func TestABI(t *testing.T) {
 		const cName = "stack_uint8_t"
 		const expect = 2047
 		var fn func(a, b, c, d, e, f, g, h uint32, i, j uint8, k uint32) uint32
-		purego.RegisterLibFunc(&fn, lib, cName)
+		pure.RegisterLibFunc(&fn, lib, cName)
 		res := fn(256, 512, 4, 8, 16, 32, 64, 128, 1, 2, 1024)
 		if res != expect {
 			t.Fatalf("%s: got %d, want %d", cName, res, expect)
@@ -212,7 +210,7 @@ func TestABI(t *testing.T) {
 		const cName = "reg_uint8_t"
 		const expect = 1027
 		var fn func(a, b uint8, c uint32) uint32
-		purego.RegisterLibFunc(&fn, lib, cName)
+		pure.RegisterLibFunc(&fn, lib, cName)
 		res := fn(1, 2, 1024)
 		if res != expect {
 			t.Fatalf("%s: got %d, want %d", cName, res, expect)
@@ -222,7 +220,7 @@ func TestABI(t *testing.T) {
 		const cName = "stack_string"
 		const expect = 255
 		var fn func(a, b, c, d, e, f, g, h uint32, i string) uint32
-		purego.RegisterLibFunc(&fn, lib, cName)
+		pure.RegisterLibFunc(&fn, lib, cName)
 		res := fn(1, 2, 4, 8, 16, 32, 64, 128, "test")
 		if res != expect {
 			t.Fatalf("%s: got %d, want %d", cName, res, expect)
@@ -231,7 +229,7 @@ func TestABI(t *testing.T) {
 	{
 		const cName = "stack_8i32_3strings"
 		var fn func(*byte, uintptr, int32, int32, int32, int32, int32, int32, int32, int32, string, string, string)
-		purego.RegisterLibFunc(&fn, lib, cName)
+		pure.RegisterLibFunc(&fn, lib, cName)
 		buf := make([]byte, 256)
 		fn(&buf[0], uintptr(len(buf)), 1, 2, 3, 4, 5, 6, 7, 8, "foo", "bar", "baz")
 		res := string(buf[:bytes.IndexByte(buf, 0)])
@@ -243,7 +241,7 @@ func TestABI(t *testing.T) {
 	{
 		const cName = "return_func_ptr"
 		var fn func() func(a, b int32) int32
-		purego.RegisterLibFunc(&fn, lib, cName)
+		pure.RegisterLibFunc(&fn, lib, cName)
 		add := fn()
 		const expect = 5
 		if res := add(2, 3); res != expect {
@@ -253,7 +251,7 @@ func TestABI(t *testing.T) {
 	{
 		const cName = "return_null_func_ptr"
 		var fn func() func(a, b int32) int32
-		purego.RegisterLibFunc(&fn, lib, cName)
+		pure.RegisterLibFunc(&fn, lib, cName)
 		if fn() != nil {
 			t.Fatalf("%s: got a non-nil func, want nil", cName)
 		}
@@ -535,7 +533,7 @@ func TestABI_ArgumentPassing(t *testing.T) {
 				t.Skip("struct argument tests only supported on Darwin ARM64/AMD64")
 			}
 
-			purego.RegisterLibFunc(tt.fn, lib, tt.cFn)
+			pure.RegisterLibFunc(tt.fn, lib, tt.cFn)
 			got := tt.call(tt.fn)
 			if got != tt.want {
 				t.Errorf("%s\n  got:  %q\n  want: %q", tt.cFn, got, tt.want)
@@ -548,7 +546,7 @@ func TestABI_ArgumentPassing(t *testing.T) {
 			t.Skip("ppc64le retains the 15-argument limit")
 		}
 		var fn func(uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr) uintptr
-		purego.RegisterLibFunc(&fn, lib, "stack_20_uintptr")
+		pure.RegisterLibFunc(&fn, lib, "stack_20_uintptr")
 		got := fn(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
 		const want = uintptr(210)
 		if got != want {
@@ -566,7 +564,7 @@ func TestABI_ArgumentPassing(t *testing.T) {
 			uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr,
 			uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr, uintptr,
 		) uintptr
-		purego.RegisterLibFunc(&fn, lib, "stack_32_uintptr")
+		pure.RegisterLibFunc(&fn, lib, "stack_32_uintptr")
 		got := fn(
 			1, 2, 3, 4, 5, 6, 7, 8,
 			9, 10, 11, 12, 13, 14, 15, 16,
@@ -587,7 +585,7 @@ func TestABI_ArgumentPassing(t *testing.T) {
 		if err != nil {
 			t.Fatalf("OpenSymbol(stack_20_uintptr) failed: %v", err)
 		}
-		got, _, _ := purego.SyscallN(fn,
+		got, _, _ := pure.SyscallN(fn,
 			1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 			11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
 		)
@@ -605,7 +603,7 @@ func TestABI_ArgumentPassing(t *testing.T) {
 		if err != nil {
 			t.Fatalf("OpenSymbol(stack_32_uintptr) failed: %v", err)
 		}
-		got, _, _ := purego.SyscallN(fn,
+		got, _, _ := pure.SyscallN(fn,
 			1, 2, 3, 4, 5, 6, 7, 8,
 			9, 10, 11, 12, 13, 14, 15, 16,
 			17, 18, 19, 20, 21, 22, 23, 24,
@@ -631,7 +629,7 @@ func TestABI_ArgumentPassing(t *testing.T) {
 			float64, float64, float64, float64, float64, float64, float64, float64,
 			float64, float64, float64, float64, float64, float64, float64, float64,
 		) float64
-		purego.RegisterLibFunc(&fn, lib, "stack_32_mixed_int_float")
+		pure.RegisterLibFunc(&fn, lib, "stack_32_mixed_int_float")
 		got := fn(
 			1, 2, 3, 4, 5, 6, 7, 8,
 			9, 10, 11, 12, 13, 14, 15, 16,
@@ -663,7 +661,7 @@ func TestABI_TooManyArguments(t *testing.T) {
 
 	// 33 int64 parameters exceeds maxArgs=32.
 	t.Run("registerfunc_33_int64_exceeds_limit", func(t *testing.T) {
-		mustPanic(t, "purego: too many stack arguments", func() {
+		mustPanic(t, "pure: too many stack arguments", func() {
 			var fn func(
 				int64, int64, int64, int64, int64, int64, int64, int64,
 				int64, int64, int64, int64, int64, int64, int64, int64,
@@ -671,7 +669,7 @@ func TestABI_TooManyArguments(t *testing.T) {
 				int64, int64, int64, int64, int64, int64, int64, int64,
 				int64,
 			)
-			purego.RegisterFunc(&fn, 1)
+			pure.RegisterFunc(&fn, 1)
 		})
 	})
 
@@ -679,18 +677,18 @@ func TestABI_TooManyArguments(t *testing.T) {
 		if runtime.GOARCH != "ppc64le" {
 			t.Skip("ppc64le retains the 15-argument limit")
 		}
-		mustPanic(t, "purego: too many stack arguments", func() {
+		mustPanic(t, "pure: too many stack arguments", func() {
 			var fn func(
 				int64, int64, int64, int64, int64, int64, int64, int64,
 				int64, int64, int64, int64, int64, int64, int64, int64,
 			)
-			purego.RegisterFunc(&fn, 1)
+			pure.RegisterFunc(&fn, 1)
 		})
 	})
 
 	t.Run("syscalln_33_uintptr_exceeds_limit", func(t *testing.T) {
-		mustPanic(t, "purego: too many arguments to SyscallN", func() {
-			purego.SyscallN(1,
+		mustPanic(t, "pure: too many arguments to SyscallN", func() {
+			pure.SyscallN(1,
 				1, 2, 3, 4, 5, 6, 7, 8,
 				9, 10, 11, 12, 13, 14, 15, 16,
 				17, 18, 19, 20, 21, 22, 23, 24,
@@ -704,8 +702,8 @@ func TestABI_TooManyArguments(t *testing.T) {
 		if runtime.GOARCH != "ppc64le" {
 			t.Skip("ppc64le retains the 15-argument limit")
 		}
-		mustPanic(t, "purego: too many arguments to SyscallN", func() {
-			purego.SyscallN(1,
+		mustPanic(t, "pure: too many arguments to SyscallN", func() {
+			pure.SyscallN(1,
 				1, 2, 3, 4, 5, 6, 7, 8,
 				9, 10, 11, 12, 13, 14, 15, 16,
 			)
@@ -719,11 +717,11 @@ func TestABI_StructReturnHiddenPointer(t *testing.T) {
 	// than sysargs holds and RegisterFunc must reject the registration.
 	type bigStruct struct{ A, B, C uint64 } // larger than two eightbytes
 
-	if !purego.StructReturnInMemory(reflect.TypeFor[bigStruct]()) {
+	if !pure.StructReturnInMemory(reflect.TypeFor[bigStruct]()) {
 		t.Skipf("GOARCH=%s does not return large structs via a hidden integer argument", runtime.GOARCH)
 	}
 
-	in := make([]reflect.Type, purego.MaxArgs)
+	in := make([]reflect.Type, pure.MaxArgs)
 	for i := range in {
 		in[i] = reflect.TypeFor[uintptr]()
 	}
@@ -745,7 +743,7 @@ func TestABI_StructReturnHiddenPointer(t *testing.T) {
 
 	// A non-zero cfn passes the nil check; the panic fires during the preflight
 	// argument count, before the function is ever called.
-	purego.RegisterFunc(fptr.Interface(), uintptr(1))
+	pure.RegisterFunc(fptr.Interface(), uintptr(1))
 }
 
 func buildSharedLib(tb testing.TB, compilerEnv, libFile string, sources ...string) error {

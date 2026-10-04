@@ -3,7 +3,7 @@
 
 //go:build !(amd64 || arm || arm64 || loong64 || ppc64le || riscv64 || s390x)
 
-package purego
+package pure
 
 import (
 	"reflect"
@@ -15,11 +15,11 @@ import (
 // only through the integer-only cgo fallback. Every struct operation panics.
 
 func addStruct(v reflect.Value, numInts, numFloats, numStack *int, addInt, addFloat, addStack func(uintptr), keepAlive []any) []any {
-	panic("purego: struct arguments are not supported on this architecture")
+	panic("pure: struct arguments are not supported on this architecture")
 }
 
 func getStruct(outType reflect.Type, syscall syscallArgs) reflect.Value {
-	panic("purego: struct returns are not supported on this architecture")
+	panic("pure: struct returns are not supported on this architecture")
 }
 
 // structReturnInMemory reports whether a struct return value is returned through
@@ -38,17 +38,17 @@ func shouldBundleStackArgs(v reflect.Value, numInts, numFloats int) bool {
 func collectStackArgs(args []reflect.Value, startIdx int, numInts, numFloats int,
 	keepAlive []any, addInt, addFloat, addStack func(uintptr),
 	pNumInts, pNumFloats, pNumStack *int) ([]reflect.Value, []any) {
-	panic("purego: collectStackArgs should not be called on this architecture")
+	panic("pure: collectStackArgs should not be called on this architecture")
 }
 
 func bundleStackArgs(stackArgs []reflect.Value, addStack func(uintptr)) {
-	panic("purego: bundleStackArgs should not be called on this architecture")
+	panic("pure: bundleStackArgs should not be called on this architecture")
 }
 
 func getCallbackStruct(inType reflect.Type, frame unsafe.Pointer, floatsN *int, intsN *int, stackSlot *int, stackByteOffset *uintptr) reflect.Value {
-	panic("purego: struct callback arguments are not supported on this architecture")
+	panic("pure: struct callback arguments are not supported on this architecture")
 }
 
 func setStruct(a *callbackArgs, ret reflect.Value) {
-	panic("purego: struct returns are not supported on this architecture")
+	panic("pure: struct returns are not supported on this architecture")
 }

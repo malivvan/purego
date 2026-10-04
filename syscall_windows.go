@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2022 The Ebitengine Authors
 
-package purego
+package pure
 
 import (
 	"reflect"
@@ -32,7 +32,7 @@ func NewCallback(fn any) uintptr {
 			continue
 		}
 		if i != 0 {
-			panic("purego: CDecl must be the first argument")
+			panic("pure: CDecl must be the first argument")
 		}
 		isCDecl = true
 	}
@@ -50,5 +50,5 @@ func loadSymbol(handle uintptr, name string) (uintptr, error) {
 const callbackMaxFrame = 0
 
 func callbackArgFromStack(argsBase unsafe.Pointer, stackSlot int, stackByteOffset *uintptr, inType reflect.Type) reflect.Value {
-	panic("purego: callbackArgFromStack should not be called on windows")
+	panic("pure: callbackArgFromStack should not be called on windows")
 }

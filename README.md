@@ -1,5 +1,5 @@
-# purego
-[![Go Reference](https://pkg.go.dev/badge/github.com/ebitengine/purego?GOOS=darwin.svg)](https://pkg.go.dev/github.com/ebitengine/purego?GOOS=darwin)
+# vendored copy of purego v0.11.0
+[![Go Reference](https://pkg.go.dev/badge/github.com/malivvan/appkit/pure?GOOS=darwin.svg)](https://pkg.go.dev/github.com/malivvan/appkit/pure?GOOS=darwin)
 
 A library for calling C functions from Go without Cgo.
 
@@ -10,7 +10,7 @@ A library for calling C functions from Go without Cgo.
 ## Motivation
 
 The [Ebitengine](https://github.com/hajimehoshi/ebiten) game engine was ported to use only Go on Windows. This enabled
-cross-compiling to Windows from any other operating system simply by setting `GOOS=windows`. The purego project was
+cross-compiling to Windows from any other operating system simply by setting `GOOS=windows`. The pure project was
 born to bring that same vision to the other platforms supported by Ebitengine.
 
 ## Benefits
@@ -30,36 +30,35 @@ except for float arguments and return values.
 
 Tier 1 platforms are the primary targets officially supported by PureGo. When a new version of PureGo is released, any critical bugs found on Tier 1 platforms are treated as release blockers. The release will be postponed until such issues are resolved.
 
-- **Android**: amd64<sup>1</sup>, arm64<sup>1</sup>
-- **iOS**: amd64<sup>1</sup>, arm64<sup>1</sup>
 - **Linux**: amd64, arm64
 - **macOS**: amd64, arm64
-- **Windows**: amd64<sup>2</sup>, arm64<sup>2</sup>
+- **Windows**: amd64<sup>1</sup>, arm64<sup>1</sup>
 
 ### Tier 2
 
 Tier 2 platforms are supported by PureGo on a best-effort basis. Critical bugs on Tier 2 platforms do not block new PureGo releases. However, fixes contributed by external contributors are very welcome and encouraged.
 
-- **Android**: 386<sup>1,3</sup>, arm<sup>1,3</sup>
-- **FreeBSD**: amd64<sup>3,4</sup>, arm64<sup>3,4</sup>
-- **Linux**: 386<sup>3</sup>, arm<sup>3</sup>, loong64<sup>2</sup>, ppc64le<sup>2</sup>, riscv64<sup>3</sup>, s390x<sup>3, 5</sup>
-- **NetBSD**: amd64<sup>3,4</sup>, arm64<sup>3,4</sup>
-- **Windows**: 386<sup>3,6</sup>, arm<sup>3,6,7</sup>
+- **FreeBSD**: amd64<sup>2</sup>, arm64<sup>2</sup>
+- **Linux**: 386<sup>2</sup>, arm<sup>2</sup>, loong64<sup>1</sup>, ppc64le<sup>1</sup>, riscv64<sup>2</sup>, s390x<sup>2,3</sup>
+- **NetBSD**: amd64<sup>2</sup>, arm64<sup>2</sup>
+- **Windows**: 386<sup>2,4</sup>, arm<sup>2,4,5</sup>
+
+**Android and iOS are not supported** by this vendored copy: their code paths,
+build tags and the iOS `CGO_ENABLED=0` guard were removed, so `GOOS=android`
+and `GOOS=ios` no longer build.
 
 #### Support Notes
 
-1. These architectures require CGO_ENABLED=1 to compile
-2. These architectures support passing structs by value as arguments and return values when calling C functions, but not in callbacks created with `NewCallback`
-3. These architectures do not support passing structs by value as arguments or return values
-4. These architectures require the special flag `-gcflags="github.com/ebitengine/purego/internal/fakecgo=-std"` to compile with CGO_ENABLED=0
-5. These architectures require CGO_ENABLED=1 to compile in versions before Go 1.27, but will be supported without Cgo in Go 1.27 and later
-6. These architectures only support `SyscallN` and `NewCallback`
-7. These architectures are no longer supported as of Go 1.26
+1. These architectures support passing structs by value as arguments and return values when calling C functions, but not in callbacks created with `NewCallback`
+2. These architectures do not support passing structs by value as arguments or return values
+3. These architectures require CGO_ENABLED=1 to compile in versions before Go 1.27, but will be supported without Cgo in Go 1.27 and later
+4. These architectures only support `SyscallN` and `NewCallback`
+5. These architectures are no longer supported as of Go 1.26
 
 ## Example
 
-The example below only showcases purego use for macOS and Linux. The other platforms require special handling which can
-be seen in the complete example at [examples/libc](https://github.com/ebitengine/purego/tree/main/examples/libc) which supports FreeBSD and Windows.
+The example below only showcases pure use for macOS and Linux. The other platforms require special handling which can
+be seen in the complete example at [examples/libc](https://github.com/malivvan/appkit/pure/tree/main/examples/libc) which supports FreeBSD and Windows.
 
 ```go
 package main
@@ -68,7 +67,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/ebitengine/purego"
+	"github.com/malivvan/appkit/pure"
 )
 
 func getSystemLibrary() string {
@@ -83,12 +82,12 @@ func getSystemLibrary() string {
 }
 
 func main() {
-	libc, err := purego.Dlopen(getSystemLibrary(), purego.RTLD_NOW|purego.RTLD_GLOBAL)
+	libc, err := pure.Dlopen(getSystemLibrary(), pure.RTLD_NOW|pure.RTLD_GLOBAL)
 	if err != nil {
 		panic(err)
 	}
 	var puts func(string)
-	purego.RegisterLibFunc(&puts, libc, "puts")
+	pure.RegisterLibFunc(&puts, libc, "puts")
 	puts("Calling C from Go without Cgo!")
 }
 ```
@@ -97,7 +96,7 @@ Then to run: `CGO_ENABLED=0 go run main.go`
 
 ## Questions
 
-If you have questions about how to incorporate purego in your project or want to discuss
+If you have questions about how to incorporate pure in your project or want to discuss
 how it works join the [Discord](https://discord.gg/HzGZVD6BkY)!
 
 ### External Code

@@ -10,7 +10,7 @@
 // these stubs are here because it is not possible to go:linkname directly the C functions
 
 TEXT _pthread_attr_getstacksize(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_pthread_attr_getstacksize(SB)
+	JMP pure_pthread_attr_getstacksize(SB)
 
 TEXT _pthread_attr_destroy(SB), NOSPLIT|NOFRAME, $0-0
-	JMP purego_pthread_attr_destroy(SB)
+	JMP pure_pthread_attr_destroy(SB)

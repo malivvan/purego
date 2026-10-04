@@ -5,16 +5,16 @@
 
 package load
 
-import "github.com/ebitengine/purego"
+import "github.com/malivvan/appkit/pure"
 
 func OpenLibrary(name string) (uintptr, error) {
-	return purego.Dlopen(name, purego.RTLD_NOW|purego.RTLD_GLOBAL)
+	return pure.Dlopen(name, pure.RTLD_NOW|pure.RTLD_GLOBAL)
 }
 
 func CloseLibrary(handle uintptr) error {
-	return purego.Dlclose(handle)
+	return pure.Dlclose(handle)
 }
 
 func OpenSymbol(lib uintptr, name string) (uintptr, error) {
-	return purego.Dlsym(lib, name)
+	return pure.Dlsym(lib, name)
 }

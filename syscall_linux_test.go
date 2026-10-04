@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package purego_test
+package pure_test
 
 import (
 	"errors"
@@ -16,7 +16,7 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/ebitengine/purego"
+	"github.com/malivvan/appkit/pure"
 )
 
 func TestAllThreadsSyscall(t *testing.T) {
@@ -178,20 +178,20 @@ func TestDlopenThenAllThreadsSyscall(t *testing.T) {
 	}
 	defer os.Remove(libFileName)
 
-	lib, err := purego.Dlopen(libFileName, purego.RTLD_NOW|purego.RTLD_GLOBAL)
+	lib, err := pure.Dlopen(libFileName, pure.RTLD_NOW|pure.RTLD_GLOBAL)
 	if err != nil {
 		t.Fatalf("Dlopen(%q) failed: %v", libFileName, err)
 	}
 
 	var callCallback func(p uintptr, s string) int
-	purego.RegisterLibFunc(&callCallback, lib, "callCallback")
+	pure.RegisterLibFunc(&callCallback, lib, "callCallback")
 
 	goFunc := func(cstr *byte, n int) int {
 		_ = string(unsafe.Slice(cstr, n))
 		return 1
 	}
 
-	cb := purego.NewCallback(goFunc)
+	cb := pure.NewCallback(goFunc)
 	for range 10 {
 		callCallback(cb, "hello")
 	}
