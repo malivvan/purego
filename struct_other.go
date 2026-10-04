@@ -3,7 +3,7 @@
 
 //go:build !(amd64 || arm || arm64 || loong64 || ppc64le || riscv64 || s390x)
 
-package pure
+package purego
 
 import (
 	"reflect"

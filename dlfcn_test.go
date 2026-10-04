@@ -3,7 +3,7 @@
 
 //go:build darwin || freebsd || linux || netbsd
 
-package pure_test
+package purego_test
 
 import (
 	"os"
@@ -11,11 +11,11 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/malivvan/appkit/pure"
+	"github.com/malivvan/purego"
 )
 
 func TestSimpleDlsym(t *testing.T) {
-	if _, err := pure.Dlsym(pure.RTLD_DEFAULT, "dlsym"); err != nil {
+	if _, err := purego.Dlsym(purego.RTLD_DEFAULT, "dlsym"); err != nil {
 		t.Errorf("Dlsym with RTLD_DEFAULT failed: %v", err)
 	}
 }
@@ -29,22 +29,22 @@ func TestNestedDlopenCall(t *testing.T) {
 	}
 	defer os.Remove(libFileName)
 
-	lib, err := pure.Dlopen(libFileName, pure.RTLD_NOW|pure.RTLD_GLOBAL)
+	lib, err := purego.Dlopen(libFileName, purego.RTLD_NOW|purego.RTLD_GLOBAL)
 	if err != nil {
 		t.Fatalf("Dlopen(%q) failed: %v", libFileName, err)
 	}
 
-	pure.Dlclose(lib)
+	purego.Dlclose(lib)
 }
 
 func TestSyscallN(t *testing.T) {
 	var dlsym uintptr
 	var err error
-	if dlsym, err = pure.Dlsym(pure.RTLD_DEFAULT, "dlsym"); err != nil {
+	if dlsym, err = purego.Dlsym(purego.RTLD_DEFAULT, "dlsym"); err != nil {
 		t.Errorf("Dlsym with RTLD_DEFAULT failed: %v", err)
 	}
-	r1, _, err2 := pure.SyscallN(dlsym, pure.RTLD_DEFAULT, uintptr(unsafe.Pointer(&[]byte("dlsym\x00")[0])))
+	r1, _, err2 := purego.SyscallN(dlsym, purego.RTLD_DEFAULT, uintptr(unsafe.Pointer(&[]byte("dlsym\x00")[0])))
 	if dlsym != r1 {
-		t.Fatalf("SyscallN didn't return the same result as pure.Dlsym: %d", err2)
+		t.Fatalf("SyscallN didn't return the same result as purego.Dlsym: %d", err2)
 	}
 }

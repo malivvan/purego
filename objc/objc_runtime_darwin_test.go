@@ -10,8 +10,8 @@ import (
 	"structs"
 	"testing"
 
-	"github.com/malivvan/appkit/pure"
-	"github.com/malivvan/appkit/pure/objc"
+	"github.com/malivvan/purego"
+	"github.com/malivvan/purego/objc"
 )
 
 func ExampleRegisterClass_helloworld() {
@@ -91,7 +91,7 @@ func ExampleIMP() {
 		fmt.Println("IMP:", self, _cmd, a3, a4, a5, a6, a7, a8, a9)
 	})
 
-	pure.SyscallN(uintptr(imp), 105, 567, 9, 2, 3, ^uintptr(4), 4, 8, 9)
+	purego.SyscallN(uintptr(imp), 105, 567, 9, 2, 3, ^uintptr(4), 4, 8, 9)
 	// Output: IMP: 105 567 9 2 3 -5 4 8 9
 }
 
@@ -140,7 +140,7 @@ func ExampleID_SendSuper() {
 
 func TestSend(t *testing.T) {
 	// NSNumber comes from Foundation so make sure we have linked to that framework.
-	_, err := pure.Dlopen("/System/Library/Frameworks/Foundation.framework/Foundation", pure.RTLD_GLOBAL|pure.RTLD_NOW)
+	_, err := purego.Dlopen("/System/Library/Frameworks/Foundation.framework/Foundation", purego.RTLD_GLOBAL|purego.RTLD_NOW)
 	if err != nil {
 		t.Fatal(err)
 	}

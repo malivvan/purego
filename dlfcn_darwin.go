@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2022 The Ebitengine Authors
 
-package pure
+package purego
 
 // Source for constants: https://opensource.apple.com/source/dyld/dyld-360.14/include/dlfcn.h.auto.html
 

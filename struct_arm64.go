@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2024 The Ebitengine Authors
 
-package pure
+package purego
 
 import (
 	"math"
@@ -11,7 +11,7 @@ import (
 	stdstrings "strings"
 	"unsafe"
 
-	"github.com/malivvan/appkit/pure/internal/strings"
+	"github.com/malivvan/purego/internal/strings"
 )
 
 // structReturnInMemory always reports false on arm64: a struct returned in

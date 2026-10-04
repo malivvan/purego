@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2022 The Ebitengine Authors
 
-package pure
+package purego
 
 // Constants as defined in https://github.com/freebsd/freebsd-src/blob/main/include/dlfcn.h
 const (

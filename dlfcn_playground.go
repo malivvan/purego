@@ -3,7 +3,7 @@
 
 //go:build faketime
 
-package pure
+package purego
 
 import "errors"
 

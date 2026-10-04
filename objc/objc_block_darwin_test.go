@@ -8,12 +8,12 @@ import (
 	"structs"
 	"testing"
 
-	"github.com/malivvan/appkit/pure"
-	"github.com/malivvan/appkit/pure/objc"
+	"github.com/malivvan/purego"
+	"github.com/malivvan/purego/objc"
 )
 
 func ExampleNewBlock() {
-	_, err := pure.Dlopen("/System/Library/Frameworks/Foundation.framework/Foundation", pure.RTLD_GLOBAL|pure.RTLD_NOW)
+	_, err := purego.Dlopen("/System/Library/Frameworks/Foundation.framework/Foundation", purego.RTLD_GLOBAL|purego.RTLD_NOW)
 	if err != nil {
 		panic(err)
 	}

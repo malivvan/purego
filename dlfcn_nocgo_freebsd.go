@@ -3,7 +3,7 @@
 
 //go:build !cgo
 
-package pure
+package purego
 
 //go:cgo_import_dynamic pure_dlopen dlopen "libc.so.7"
 //go:cgo_import_dynamic pure_dlsym dlsym "libc.so.7"

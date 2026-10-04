@@ -3,7 +3,7 @@
 
 //go:build darwin || freebsd || linux || netbsd || windows
 
-package pure
+package purego
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/malivvan/appkit/pure/internal/strings"
+	"github.com/malivvan/purego/internal/strings"
 )
 
 const (
@@ -85,14 +85,14 @@ func RegisterLibFunc(fptr any, handle uintptr, name string) {
 // hold onto a reference to Go memory. This is the same as the [Cgo rules].
 //
 // However, there are some special cases. When passing a string as an argument if the string does not end in a null
-// terminated byte (\x00) then the string will be copied into memory maintained by pure. The memory is only valid for
+// terminated byte (\x00) then the string will be copied into memory maintained by purego. The memory is only valid for
 // that specific call. Therefore, if the C code keeps a reference to that string it may become invalid at some
 // undefined time. However, if the string does already contain a null-terminated byte then no copy is done.
 // It is then the responsibility of the caller to ensure the string stays alive as long as it's needed in C memory.
 // This can be done using runtime.KeepAlive or allocating the string in C memory using malloc. When a C function
 // returns a null-terminated pointer to char a Go string can be used. Purego will allocate a new string in Go memory
 // and copy the data over. This string will be garbage collected whenever Go decides it's no longer referenced.
-// This C created string will not be freed by pure. If the pointer to char is not null-terminated or must continue
+// This C created string will not be freed by purego. If the pointer to char is not null-terminated or must continue
 // to point to C memory (because it's a buffer for example) then use a pointer to byte and then convert that to a slice
 // using unsafe.Slice. Doing this means that it becomes the responsibility of the caller to care about the lifetime
 // of the pointer

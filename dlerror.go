@@ -3,7 +3,7 @@
 
 //go:build darwin || freebsd || linux || netbsd
 
-package pure
+package purego
 
 // Dlerror represents an error value returned from Dlopen, Dlsym, or Dlclose.
 //

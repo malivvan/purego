@@ -3,10 +3,10 @@
 
 //go:build cgo && !(386 || amd64 || arm || arm64 || loong64 || ppc64le || riscv64 || s390x)
 
-package pure
+package purego
 
 import (
-	"github.com/malivvan/appkit/pure/internal/cgo"
+	"github.com/malivvan/purego/internal/cgo"
 )
 
 var syscallXABI0 = uintptr(cgo.SyscallXABI0)

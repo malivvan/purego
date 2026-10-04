@@ -1,5 +1,5 @@
 # vendored copy of purego v0.11.0
-[![Go Reference](https://pkg.go.dev/badge/github.com/malivvan/appkit/pure?GOOS=darwin.svg)](https://pkg.go.dev/github.com/malivvan/appkit/pure?GOOS=darwin)
+[![Go Reference](https://pkg.go.dev/badge/github.com/malivvan/purego?GOOS=darwin.svg)](https://pkg.go.dev/github.com/malivvan/purego?GOOS=darwin)
 
 A library for calling C functions from Go without Cgo.
 
@@ -58,7 +58,7 @@ and `GOOS=ios` no longer build.
 ## Example
 
 The example below only showcases pure use for macOS and Linux. The other platforms require special handling which can
-be seen in the complete example at [examples/libc](https://github.com/malivvan/appkit/pure/tree/main/examples/libc) which supports FreeBSD and Windows.
+be seen in the complete example at [examples/libc](https://github.com/malivvan/purego/tree/main/examples/libc) which supports FreeBSD and Windows.
 
 ```go
 package main
@@ -67,7 +67,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/malivvan/appkit/pure"
+	"github.com/malivvan/purego"
 )
 
 func getSystemLibrary() string {
@@ -82,12 +82,12 @@ func getSystemLibrary() string {
 }
 
 func main() {
-	libc, err := pure.Dlopen(getSystemLibrary(), pure.RTLD_NOW|pure.RTLD_GLOBAL)
+	libc, err := purego.Dlopen(getSystemLibrary(), purego.RTLD_NOW|purego.RTLD_GLOBAL)
 	if err != nil {
 		panic(err)
 	}
 	var puts func(string)
-	pure.RegisterLibFunc(&puts, libc, "puts")
+	purego.RegisterLibFunc(&puts, libc, "puts")
 	puts("Calling C from Go without Cgo!")
 }
 ```

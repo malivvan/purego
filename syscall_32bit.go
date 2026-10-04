@@ -3,7 +3,7 @@
 
 //go:build (386 || arm) && (freebsd || linux || netbsd || windows)
 
-package pure
+package purego
 
 import (
 	"runtime"

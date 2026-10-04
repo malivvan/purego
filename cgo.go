@@ -3,7 +3,7 @@
 
 //go:build cgo && (darwin || freebsd || linux || netbsd)
 
-package pure
+package purego
 
 // if CGO_ENABLED=1 import the Cgo runtime to ensure that it is set up properly.
 // This is required since some frameworks need TLS setup the C way which Go doesn't do.
@@ -14,5 +14,5 @@ package pure
 import (
 	_ "runtime/cgo"
 
-	_ "github.com/malivvan/appkit/pure/internal/cgo"
+	_ "github.com/malivvan/purego/internal/cgo"
 )

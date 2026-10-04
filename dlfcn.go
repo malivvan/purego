@@ -3,7 +3,7 @@
 
 //go:build (darwin || freebsd || linux || netbsd) && !faketime
 
-package pure
+package purego
 
 import (
 	"unsafe"

@@ -3,7 +3,7 @@
 
 //go:build darwin || (linux && (386 || amd64 || arm || arm64 || loong64 || ppc64le || riscv64 || s390x))
 
-package pure_test
+package purego_test
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/malivvan/appkit/pure"
+	"github.com/malivvan/purego"
 )
 
 // TestCallGoFromSharedLib is a test that checks for stack corruption on arm64
@@ -27,13 +27,13 @@ func TestCallGoFromSharedLib(t *testing.T) {
 	}
 	defer os.Remove(libFileName)
 
-	lib, err := pure.Dlopen(libFileName, pure.RTLD_NOW|pure.RTLD_GLOBAL)
+	lib, err := purego.Dlopen(libFileName, purego.RTLD_NOW|purego.RTLD_GLOBAL)
 	if err != nil {
 		t.Fatalf("Dlopen(%q) failed: %v", libFileName, err)
 	}
 
 	var callCallback func(p uintptr, s string) int
-	pure.RegisterLibFunc(&callCallback, lib, "callCallback")
+	purego.RegisterLibFunc(&callCallback, lib, "callCallback")
 
 	goFunc := func(cstr *byte, n int) int {
 		s := string(unsafe.Slice(cstr, n))
@@ -42,7 +42,7 @@ func TestCallGoFromSharedLib(t *testing.T) {
 	}
 
 	const want = 10101
-	cb := pure.NewCallback(goFunc)
+	cb := purego.NewCallback(goFunc)
 	for i := range 10 {
 		got := callCallback(cb, "a test string")
 		if got != want {
@@ -59,7 +59,7 @@ func TestNewCallbackFloat64(t *testing.T) {
 	)
 	var cbTotal int
 	var cbTotalF float64
-	imp := pure.NewCallback(func(a1, a2, a3, a4, a5, a6, a7, a8, a9 int,
+	imp := purego.NewCallback(func(a1, a2, a3, a4, a5, a6, a7, a8, a9 int,
 		f1, f2, f3, f4, f5, f6, f7, f8 float64,
 	) {
 		cbTotal = a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9
@@ -67,7 +67,7 @@ func TestNewCallbackFloat64(t *testing.T) {
 	})
 	var fn func(a1, a2, a3, a4, a5, a6, a7, a8, a9 int,
 		f1, f2, f3, f4, f5, f6, f7, f8 float64)
-	pure.RegisterFunc(&fn, imp)
+	purego.RegisterFunc(&fn, imp)
 	fn(1, 2, -3, 4, -5, 6, -7, 8, -9,
 		1, 2, 3, 4, 5, 6, 7, 8)
 
@@ -85,11 +85,11 @@ func TestNewCallbackFloat64AndIntMix(t *testing.T) {
 		expectCbTotal = 54.75
 	)
 	var cbTotal float64
-	imp := pure.NewCallback(func(a1, a2 float64, a3, a4, a5 int, a6, a7, a8 float64, a9 int) {
+	imp := purego.NewCallback(func(a1, a2 float64, a3, a4, a5 int, a6, a7, a8 float64, a9 int) {
 		cbTotal = a1 + a2 + float64(a3) + float64(a4) + float64(a5) + a6 + a7 + a8 + float64(a9)
 	})
 	var fn func(a1, a2 float64, a3, a4, a5 int, a6, a7, a8 float64, a9 int)
-	pure.RegisterFunc(&fn, imp)
+	purego.RegisterFunc(&fn, imp)
 	fn(1.25, 3.25, 4, 5, 6, 7.5, 8.25, 9.5, 10)
 
 	if cbTotal != expectCbTotal {
@@ -105,7 +105,7 @@ func TestNewCallbackFloat32(t *testing.T) {
 	)
 	var cbTotal int
 	var cbTotalF float32
-	imp := pure.NewCallback(func(a1, a2, a3, a4, a5, a6, a7, a8 int,
+	imp := purego.NewCallback(func(a1, a2, a3, a4, a5, a6, a7, a8 int,
 		f1, f2, f3, f4, f5, f6, f7, f8, f9 float32,
 	) {
 		cbTotal = a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8
@@ -113,7 +113,7 @@ func TestNewCallbackFloat32(t *testing.T) {
 	})
 	var fn func(a1, a2, a3, a4, a5, a6, a7, a8 int,
 		f1, f2, f3, f4, f5, f6, f7, f8, f9 float32)
-	pure.RegisterFunc(&fn, imp)
+	purego.RegisterFunc(&fn, imp)
 	fn(1, 2, -3, 4, -5, 6, -7, 8,
 		1, 2, 3, 4, 5, 6, 7, 8, 9)
 
@@ -138,12 +138,12 @@ func TestNewCallbackFloat32AndFloat64(t *testing.T) {
 	)
 	var cbTotalF32 float32
 	var cbTotalF64 float64
-	imp := pure.NewCallback(func(f1, f2, f3 float32, f4, f5, f6 float64, f7, f8, f9 float32, f10, f11, f12 float64, f13, f14, f15 float32) {
+	imp := purego.NewCallback(func(f1, f2, f3 float32, f4, f5, f6 float64, f7, f8, f9 float32, f10, f11, f12 float64, f13, f14, f15 float32) {
 		cbTotalF32 = f1 + f2 + f3 + f7 + f8 + f9 + f13 + f14 + f15
 		cbTotalF64 = f4 + f5 + f6 + f10 + f11 + f12
 	})
 	var fn func(f1, f2, f3 float32, f4, f5, f6 float64, f7, f8, f9 float32, f10, f11, f12 float64, f13, f14, f15 float32)
-	pure.RegisterFunc(&fn, imp)
+	purego.RegisterFunc(&fn, imp)
 	fn(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
 
 	if cbTotalF32 != expectedCbTotalF32 {
@@ -155,13 +155,13 @@ func TestNewCallbackFloat32AndFloat64(t *testing.T) {
 }
 
 func ExampleNewCallback() {
-	cb := pure.NewCallback(func(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15 int) int {
+	cb := purego.NewCallback(func(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15 int) int {
 		fmt.Println(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15)
 		return a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9 + a10 + a11 + a12 + a13 + a14 + a15
 	})
 
 	var fn func(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15 int) int
-	pure.RegisterFunc(&fn, cb)
+	purego.RegisterFunc(&fn, cb)
 
 	ret := fn(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
 	fmt.Println(ret)
@@ -171,11 +171,11 @@ func ExampleNewCallback() {
 }
 
 func ExampleNewCallback_cdecl() {
-	fn := func(_ pure.CDecl, a int) {
+	fn := func(_ purego.CDecl, a int) {
 		fmt.Println(a)
 	}
-	cb := pure.NewCallback(fn)
-	pure.SyscallN(cb, 83)
+	cb := purego.NewCallback(fn)
+	purego.SyscallN(cb, 83)
 
 	// Output: 83
 }
@@ -191,20 +191,20 @@ func TestCallbackInt32Packing(t *testing.T) {
 	}
 	defer os.Remove(libFileName)
 
-	lib, err := pure.Dlopen(libFileName, pure.RTLD_NOW|pure.RTLD_GLOBAL)
+	lib, err := purego.Dlopen(libFileName, purego.RTLD_NOW|purego.RTLD_GLOBAL)
 	if err != nil {
 		t.Fatalf("Dlopen(%q) failed: %v", libFileName, err)
 	}
 
 	var callCallback12Int32 func(cb uintptr) int32
-	pure.RegisterLibFunc(&callCallback12Int32, lib, "callCallback12Int32")
+	purego.RegisterLibFunc(&callCallback12Int32, lib, "callCallback12Int32")
 
 	// Go callback that sums the 12 int32 arguments (prime numbers: 2,3,5,7,11,13,17,19,23,29,31,37)
 	goFunc := func(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12 int32) int32 {
 		return a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9 + a10 + a11 + a12
 	}
 
-	cb := pure.NewCallback(goFunc)
+	cb := purego.NewCallback(goFunc)
 	got := callCallback12Int32(cb)
 	want := int32(2 + 3 + 5 + 7 + 11 + 13 + 17 + 19 + 23 + 29 + 31 + 37) // 197
 	if got != want {
@@ -223,13 +223,13 @@ func TestCallbackMixedStackPacking(t *testing.T) {
 	}
 	defer os.Remove(libFileName)
 
-	lib, err := pure.Dlopen(libFileName, pure.RTLD_NOW|pure.RTLD_GLOBAL)
+	lib, err := purego.Dlopen(libFileName, purego.RTLD_NOW|purego.RTLD_GLOBAL)
 	if err != nil {
 		t.Fatalf("Dlopen(%q) failed: %v", libFileName, err)
 	}
 
 	var callCallbackMixedStack func(cb uintptr) int64
-	pure.RegisterLibFunc(&callCallbackMixedStack, lib, "callCallbackMixedStack")
+	purego.RegisterLibFunc(&callCallbackMixedStack, lib, "callCallbackMixedStack")
 
 	// Go callback: 8 int64s in regs, then int32(100), int64(200), int32(300) on stack
 	goFunc := func(a1, a2, a3, a4, a5, a6, a7, a8 int64, s1 int32, s2 int64, s3 int32) int64 {
@@ -237,7 +237,7 @@ func TestCallbackMixedStackPacking(t *testing.T) {
 		return a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + int64(s1) + s2 + int64(s3)
 	}
 
-	cb := pure.NewCallback(goFunc)
+	cb := purego.NewCallback(goFunc)
 	got := callCallbackMixedStack(cb)
 	want := int64(1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 100 + 200 + 300) // 636
 	if got != want {
@@ -256,13 +256,13 @@ func TestCallbackSmallTypesPacking(t *testing.T) {
 	}
 	defer os.Remove(libFileName)
 
-	lib, err := pure.Dlopen(libFileName, pure.RTLD_NOW|pure.RTLD_GLOBAL)
+	lib, err := purego.Dlopen(libFileName, purego.RTLD_NOW|purego.RTLD_GLOBAL)
 	if err != nil {
 		t.Fatalf("Dlopen(%q) failed: %v", libFileName, err)
 	}
 
 	var callCallbackSmallTypes func(cb uintptr) int64
-	pure.RegisterLibFunc(&callCallbackSmallTypes, lib, "callCallbackSmallTypes")
+	purego.RegisterLibFunc(&callCallbackSmallTypes, lib, "callCallbackSmallTypes")
 
 	// Values: 1,2,3,4,5,6,7,8 (regs), true, -42, 200, -1000, 50000, 123456 (stack)
 	var gotBool bool
@@ -283,7 +283,7 @@ func TestCallbackSmallTypesPacking(t *testing.T) {
 		return a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8
 	}
 
-	cb := pure.NewCallback(goFunc)
+	cb := purego.NewCallback(goFunc)
 	got := callCallbackSmallTypes(cb)
 
 	// Check register args sum
@@ -324,19 +324,19 @@ func TestCallback10Int32Packing(t *testing.T) {
 	}
 	defer os.Remove(libFileName)
 
-	lib, err := pure.Dlopen(libFileName, pure.RTLD_NOW|pure.RTLD_GLOBAL)
+	lib, err := purego.Dlopen(libFileName, purego.RTLD_NOW|purego.RTLD_GLOBAL)
 	if err != nil {
 		t.Fatalf("Dlopen(%q) failed: %v", libFileName, err)
 	}
 
 	var callCallback10Int32 func(cb uintptr) int32
-	pure.RegisterLibFunc(&callCallback10Int32, lib, "callCallback10Int32")
+	purego.RegisterLibFunc(&callCallback10Int32, lib, "callCallback10Int32")
 
 	goFunc := func(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10 int32) int32 {
 		return a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9 + a10
 	}
 
-	cb := pure.NewCallback(goFunc)
+	cb := purego.NewCallback(goFunc)
 	got := callCallback10Int32(cb)
 	want := int32(1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10) // 55
 	if got != want {
@@ -355,13 +355,13 @@ func TestCallbackFloat64StackPacking(t *testing.T) {
 	}
 	defer os.Remove(libFileName)
 
-	lib, err := pure.Dlopen(libFileName, pure.RTLD_NOW|pure.RTLD_GLOBAL)
+	lib, err := purego.Dlopen(libFileName, purego.RTLD_NOW|purego.RTLD_GLOBAL)
 	if err != nil {
 		t.Fatalf("Dlopen(%q) failed: %v", libFileName, err)
 	}
 
 	var callCallback10Float64 func(cb uintptr) int64
-	pure.RegisterLibFunc(&callCallback10Float64, lib, "callCallback10Float64")
+	purego.RegisterLibFunc(&callCallback10Float64, lib, "callCallback10Float64")
 
 	// 10 float64s: 8 in registers, 2 on stack
 	// Return int64 since callbacks don't support float returns
@@ -370,7 +370,7 @@ func TestCallbackFloat64StackPacking(t *testing.T) {
 		return int64(sum * 10) // 60.0 * 10 = 600
 	}
 
-	cb := pure.NewCallback(goFunc)
+	cb := purego.NewCallback(goFunc)
 	got := callCallback10Float64(cb)
 	want := int64(600)
 	if got != want {
@@ -389,13 +389,13 @@ func TestCallbackFloat32StackPacking(t *testing.T) {
 	}
 	defer os.Remove(libFileName)
 
-	lib, err := pure.Dlopen(libFileName, pure.RTLD_NOW|pure.RTLD_GLOBAL)
+	lib, err := purego.Dlopen(libFileName, purego.RTLD_NOW|purego.RTLD_GLOBAL)
 	if err != nil {
 		t.Fatalf("Dlopen(%q) failed: %v", libFileName, err)
 	}
 
 	var callCallback12Float32 func(cb uintptr) int64
-	pure.RegisterLibFunc(&callCallback12Float32, lib, "callCallback12Float32")
+	purego.RegisterLibFunc(&callCallback12Float32, lib, "callCallback12Float32")
 
 	// 12 float32s: 8 in registers, 4 on stack
 	// Return int64 since callbacks don't support float returns
@@ -404,7 +404,7 @@ func TestCallbackFloat32StackPacking(t *testing.T) {
 		return int64(sum) // 78
 	}
 
-	cb := pure.NewCallback(goFunc)
+	cb := purego.NewCallback(goFunc)
 	got := callCallback12Float32(cb)
 	want := int64(78)
 	if got != want {

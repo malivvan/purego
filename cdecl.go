@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2026 The Ebitengine Authors
 
-package pure
+package purego
 
 // CDecl marks a function as being called using the __cdecl calling convention as defined in
 // the [MSDocs] when passed to NewCallback. It must be the first argument to the function.

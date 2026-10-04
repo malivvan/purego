@@ -18,8 +18,8 @@ import (
 	"unicode"
 	"unsafe"
 
-	"github.com/malivvan/appkit/pure"
-	"github.com/malivvan/appkit/pure/internal/strings"
+	"github.com/malivvan/purego"
+	"github.com/malivvan/purego/internal/strings"
 )
 
 var hostLayoutType = reflect.TypeFor[structs.HostLayout]()
@@ -68,62 +68,62 @@ var (
 )
 
 func init() {
-	objc, err := pure.Dlopen("/usr/lib/libobjc.A.dylib", pure.RTLD_GLOBAL|pure.RTLD_NOW)
+	objc, err := purego.Dlopen("/usr/lib/libobjc.A.dylib", purego.RTLD_GLOBAL|purego.RTLD_NOW)
 	if err != nil {
 		panic(fmt.Errorf("objc: %w", err))
 	}
-	objc_msgSend_fn, err = pure.Dlsym(objc, "objc_msgSend")
+	objc_msgSend_fn, err = purego.Dlsym(objc, "objc_msgSend")
 	if err != nil {
 		panic(fmt.Errorf("objc: %w", err))
 	}
 	if runtime.GOARCH == "amd64" {
-		objc_msgSend_stret_fn, err = pure.Dlsym(objc, "objc_msgSend_stret")
+		objc_msgSend_stret_fn, err = purego.Dlsym(objc, "objc_msgSend_stret")
 		if err != nil {
 			panic(fmt.Errorf("objc: %w", err))
 		}
-		objc_msgSendSuper2_stret_fn, err = pure.Dlsym(objc, "objc_msgSendSuper2_stret")
+		objc_msgSendSuper2_stret_fn, err = purego.Dlsym(objc, "objc_msgSendSuper2_stret")
 		if err != nil {
 			panic(fmt.Errorf("objc: %w", err))
 		}
 	}
-	pure.RegisterFunc(&objc_msgSend, objc_msgSend_fn)
-	objc_msgSendSuper2_fn, err = pure.Dlsym(objc, "objc_msgSendSuper2")
+	purego.RegisterFunc(&objc_msgSend, objc_msgSend_fn)
+	objc_msgSendSuper2_fn, err = purego.Dlsym(objc, "objc_msgSendSuper2")
 	if err != nil {
 		panic(fmt.Errorf("objc: %w", err))
 	}
-	pure.RegisterFunc(&objc_msgSendSuper2, objc_msgSendSuper2_fn)
-	pure.RegisterLibFunc(&object_getClass, objc, "object_getClass")
-	pure.RegisterLibFunc(&objc_getClass, objc, "objc_getClass")
-	pure.RegisterLibFunc(&objc_getProtocol, objc, "objc_getProtocol")
-	pure.RegisterLibFunc(&objc_allocateProtocol, objc, "objc_allocateProtocol")
-	pure.RegisterLibFunc(&objc_registerProtocol, objc, "objc_registerProtocol")
-	pure.RegisterLibFunc(&objc_allocateClassPair, objc, "objc_allocateClassPair")
-	pure.RegisterLibFunc(&objc_registerClassPair, objc, "objc_registerClassPair")
-	pure.RegisterLibFunc(&sel_registerName, objc, "sel_registerName")
-	pure.RegisterLibFunc(&class_getSuperclass, objc, "class_getSuperclass")
-	pure.RegisterLibFunc(&class_getInstanceVariable, objc, "class_getInstanceVariable")
-	pure.RegisterLibFunc(&class_addMethod, objc, "class_addMethod")
-	pure.RegisterLibFunc(&class_addIvar, objc, "class_addIvar")
-	pure.RegisterLibFunc(&class_addProtocol, objc, "class_addProtocol")
-	pure.RegisterLibFunc(&class_getInstanceSize, objc, "class_getInstanceSize")
-	pure.RegisterLibFunc(&ivar_getOffset, objc, "ivar_getOffset")
-	pure.RegisterLibFunc(&ivar_getName, objc, "ivar_getName")
-	pure.RegisterLibFunc(&protocol_getName, objc, "protocol_getName")
-	pure.RegisterLibFunc(&protocol_isEqual, objc, "protocol_isEqual")
-	pure.RegisterLibFunc(&protocol_addMethodDescription, objc, "protocol_addMethodDescription")
-	pure.RegisterLibFunc(&protocol_copyMethodDescriptionList, objc, "protocol_copyMethodDescriptionList")
-	pure.RegisterLibFunc(&protocol_copyProtocolList, objc, "protocol_copyProtocolList")
-	pure.RegisterLibFunc(&protocol_addProtocol, objc, "protocol_addProtocol")
-	pure.RegisterLibFunc(&protocol_addProperty, objc, "protocol_addProperty")
-	pure.RegisterLibFunc(&protocol_copyPropertyList2, objc, "protocol_copyPropertyList2")
-	pure.RegisterLibFunc(&property_getName, objc, "property_getName")
-	pure.RegisterLibFunc(&property_getAttributes, objc, "property_getAttributes")
-	pure.RegisterLibFunc(&object_getIvar, objc, "object_getIvar")
-	pure.RegisterLibFunc(&object_setIvar, objc, "object_setIvar")
-	pure.RegisterLibFunc(&free, pure.RTLD_DEFAULT, "free")
+	purego.RegisterFunc(&objc_msgSendSuper2, objc_msgSendSuper2_fn)
+	purego.RegisterLibFunc(&object_getClass, objc, "object_getClass")
+	purego.RegisterLibFunc(&objc_getClass, objc, "objc_getClass")
+	purego.RegisterLibFunc(&objc_getProtocol, objc, "objc_getProtocol")
+	purego.RegisterLibFunc(&objc_allocateProtocol, objc, "objc_allocateProtocol")
+	purego.RegisterLibFunc(&objc_registerProtocol, objc, "objc_registerProtocol")
+	purego.RegisterLibFunc(&objc_allocateClassPair, objc, "objc_allocateClassPair")
+	purego.RegisterLibFunc(&objc_registerClassPair, objc, "objc_registerClassPair")
+	purego.RegisterLibFunc(&sel_registerName, objc, "sel_registerName")
+	purego.RegisterLibFunc(&class_getSuperclass, objc, "class_getSuperclass")
+	purego.RegisterLibFunc(&class_getInstanceVariable, objc, "class_getInstanceVariable")
+	purego.RegisterLibFunc(&class_addMethod, objc, "class_addMethod")
+	purego.RegisterLibFunc(&class_addIvar, objc, "class_addIvar")
+	purego.RegisterLibFunc(&class_addProtocol, objc, "class_addProtocol")
+	purego.RegisterLibFunc(&class_getInstanceSize, objc, "class_getInstanceSize")
+	purego.RegisterLibFunc(&ivar_getOffset, objc, "ivar_getOffset")
+	purego.RegisterLibFunc(&ivar_getName, objc, "ivar_getName")
+	purego.RegisterLibFunc(&protocol_getName, objc, "protocol_getName")
+	purego.RegisterLibFunc(&protocol_isEqual, objc, "protocol_isEqual")
+	purego.RegisterLibFunc(&protocol_addMethodDescription, objc, "protocol_addMethodDescription")
+	purego.RegisterLibFunc(&protocol_copyMethodDescriptionList, objc, "protocol_copyMethodDescriptionList")
+	purego.RegisterLibFunc(&protocol_copyProtocolList, objc, "protocol_copyProtocolList")
+	purego.RegisterLibFunc(&protocol_addProtocol, objc, "protocol_addProtocol")
+	purego.RegisterLibFunc(&protocol_addProperty, objc, "protocol_addProperty")
+	purego.RegisterLibFunc(&protocol_copyPropertyList2, objc, "protocol_copyPropertyList2")
+	purego.RegisterLibFunc(&property_getName, objc, "property_getName")
+	purego.RegisterLibFunc(&property_getAttributes, objc, "property_getAttributes")
+	purego.RegisterLibFunc(&object_getIvar, objc, "object_getIvar")
+	purego.RegisterLibFunc(&object_setIvar, objc, "object_setIvar")
+	purego.RegisterLibFunc(&free, purego.RTLD_DEFAULT, "free")
 
-	pure.RegisterLibFunc(&_Block_copy, objc, "_Block_copy")
-	pure.RegisterLibFunc(&_Block_release, objc, "_Block_release")
+	purego.RegisterLibFunc(&_Block_copy, objc, "_Block_copy")
+	purego.RegisterLibFunc(&_Block_release, objc, "_Block_release")
 	theBlocksCache = newBlockCache()
 }
 
@@ -164,9 +164,9 @@ func Send[T any](id ID, sel SEL, args ...any) T {
 	if runtime.GOARCH == "amd64" &&
 		reflect.ValueOf(zero).Kind() == reflect.Struct &&
 		reflect.ValueOf(zero).Type().Size() > maxRegAllocStructSize {
-		pure.RegisterFunc(&fn, objc_msgSend_stret_fn)
+		purego.RegisterFunc(&fn, objc_msgSend_stret_fn)
 	} else {
-		pure.RegisterFunc(&fn, objc_msgSend_fn)
+		purego.RegisterFunc(&fn, objc_msgSend_fn)
 	}
 	return fn(id, sel, args...)
 }
@@ -204,9 +204,9 @@ func SendSuper[T any](id ID, sel SEL, args ...any) T {
 	if runtime.GOARCH == "amd64" &&
 		reflect.ValueOf(zero).Kind() == reflect.Struct &&
 		reflect.ValueOf(zero).Type().Size() > maxRegAllocStructSize {
-		pure.RegisterFunc(&fn, objc_msgSendSuper2_stret_fn)
+		purego.RegisterFunc(&fn, objc_msgSendSuper2_stret_fn)
 	} else {
-		pure.RegisterFunc(&fn, objc_msgSendSuper2_fn)
+		purego.RegisterFunc(&fn, objc_msgSendSuper2_fn)
 	}
 	return fn(super, sel, args...)
 }
@@ -245,8 +245,8 @@ type MethodDef struct {
 //
 // In Go, the functions can be accessed as follows:
 //
-//	var value = pure.Send[float32](id, pure.RegisterName("value"))
-//	id.Send(pure.RegisterName("setValue:"), 3.46)
+//	var value = purego.Send[float32](id, purego.RegisterName("value"))
+//	id.Send(purego.RegisterName("setValue:"), 3.46)
 //
 // [Apple Docs]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocProperties.html
 type IvarAttrib int
@@ -711,5 +711,5 @@ func NewIMP(fn any) IMP {
 	case ty.In(1) != reflect.TypeFor[SEL]():
 		panic("objc: NewIMP must take a (id, SEL) as its first two arguments; got " + ty.String())
 	}
-	return IMP(pure.NewCallback(fn))
+	return IMP(purego.NewCallback(fn))
 }

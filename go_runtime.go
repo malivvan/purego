@@ -3,7 +3,7 @@
 
 //go:build darwin || freebsd || linux || netbsd || windows
 
-package pure
+package purego
 
 import (
 	"unsafe"

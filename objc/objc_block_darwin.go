@@ -10,7 +10,7 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/malivvan/appkit/pure"
+	"github.com/malivvan/purego"
 )
 
 const (
@@ -97,7 +97,7 @@ func newBlockFunctionCache() *blockFunctionCache {
 // blockCache is a thread safe cache of block layouts.
 //
 // It takes advantage of the block being the first argument of a block call being the block closure,
-// only invoking [github.com/malivvan/appkit/pure.NewCallback] when it encounters a new function type (rather than on for every block creation).
+// only invoking [github.com/malivvan/purego.NewCallback] when it encounters a new function type (rather than on for every block creation).
 // This should mitigate block creations putting pressure on the callback limit.
 type blockCache struct {
 	sync.Mutex
@@ -166,7 +166,7 @@ func (b *blockCache) getLayout(typ reflect.Type) blockLayout {
 	// create a global callback.
 	// this single callback can dispatch to any function with the same signature,
 	// since the user-provided functions are associated with the actual block allocations.
-	layout.invoke = pure.NewCallback(
+	layout.invoke = purego.NewCallback(
 		reflect.MakeFunc(
 			typ,
 			func(args []reflect.Value) (results []reflect.Value) {
@@ -198,7 +198,7 @@ func newBlockCache() *blockCache {
 		layouts:   map[reflect.Type]blockLayout{},
 		Functions: newBlockFunctionCache(),
 	}
-	cache.descriptorTemplate.dispose = pure.NewCallback(cache.Functions.Delete)
+	cache.descriptorTemplate.dispose = purego.NewCallback(cache.Functions.Delete)
 	return cache
 }
 

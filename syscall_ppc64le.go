@@ -3,7 +3,7 @@
 
 //go:build linux
 
-package pure
+package purego
 
 import (
 	"unsafe"

@@ -3,7 +3,7 @@
 
 //go:build (darwin || linux || windows) && (amd64 || arm64 || loong64 || ppc64le)
 
-package pure_test
+package purego_test
 
 import (
 	"iter"
@@ -17,8 +17,8 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/malivvan/appkit/pure"
-	"github.com/malivvan/appkit/pure/internal/load"
+	"github.com/malivvan/purego"
+	"github.com/malivvan/purego/internal/load"
 )
 
 func TestRegisterFunc_structArgs(t *testing.T) {
@@ -57,7 +57,7 @@ func TestRegisterFunc_structArgs(t *testing.T) {
 		{
 			name: "RegisterLibFunc",
 			register: func(fptr any, handle uintptr, name string, _ any) {
-				pure.RegisterLibFunc(fptr, handle, name)
+				purego.RegisterLibFunc(fptr, handle, name)
 			},
 		},
 		{
@@ -70,11 +70,11 @@ func TestRegisterFunc_structArgs(t *testing.T) {
 					if kind == reflect.Float32 || kind == reflect.Float64 {
 						// NewCallback doesn't support float returns.
 						// Float struct args are covered by identity tests that return structs.
-						pure.RegisterLibFunc(fptr, handle, name)
+						purego.RegisterLibFunc(fptr, handle, name)
 						return
 					}
 				}
-				pure.RegisterFunc(fptr, pure.NewCallback(goFn))
+				purego.RegisterFunc(fptr, purego.NewCallback(goFn))
 			},
 		},
 	}
@@ -993,7 +993,7 @@ func TestRegisterFunc_structReturns(t *testing.T) {
 	}{
 		{
 			name:     "RegisterLibFunc",
-			register: pure.RegisterLibFunc,
+			register: purego.RegisterLibFunc,
 		},
 		{
 			name:          "GoCallbackFunc",
@@ -1011,7 +1011,7 @@ func TestRegisterFunc_structReturns(t *testing.T) {
 					}
 					return []reflect.Value{ret}
 				})
-				pure.RegisterFunc(fptr, pure.NewCallback(fn.Interface()))
+				purego.RegisterFunc(fptr, purego.NewCallback(fn.Interface()))
 			},
 		},
 	}
@@ -1381,7 +1381,7 @@ func TestRegisterFunc_structReturns(t *testing.T) {
 				// The GoCallbackFunc register helper decomposes args into struct fields,
 				// which doesn't work for identity functions with struct args.
 				// Struct callback args are tested in TestRegisterFunc_structArgs.
-				pure.RegisterLibFunc(&IdentityMixed5, lib, "IdentityMixed5")
+				purego.RegisterLibFunc(&IdentityMixed5, lib, "IdentityMixed5")
 				ptr := new(int64)
 				expected := Mixed5{A: ptr, B: 1, C: 7.2, D: 9}
 				if ret := IdentityMixed5(expected); ret != expected {
@@ -1425,7 +1425,7 @@ func TestRegisterFunc_structReturns(t *testing.T) {
 					b unsafe.Pointer
 				}
 				var ReturnPtr1 func(a *int64, b unsafe.Pointer) Ptr1
-				pure.RegisterLibFunc(&ReturnPtr1, lib, "ReturnPtr1")
+				purego.RegisterLibFunc(&ReturnPtr1, lib, "ReturnPtr1")
 				a, b := new(int64), new(struct{})
 				expected := Ptr1{a: a, b: unsafe.Pointer(b)}
 				if ret := ReturnPtr1(a, unsafe.Pointer(b)); ret != expected {

@@ -3,7 +3,7 @@
 
 //go:build !cgo && !faketime
 
-package pure
+package purego
 
 // if there is no Cgo we must link to each of the functions from dlfcn.h
 // then the functions are called inside dlfcn_stubs.s

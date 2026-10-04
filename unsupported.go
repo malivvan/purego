@@ -3,7 +3,7 @@
 
 //go:build android || ios
 
-package pure
+package purego
 
 // Android and iOS are not supported by this vendored copy of pure: their code
 // paths, build tags and the iOS CGO guard were removed (see the README
