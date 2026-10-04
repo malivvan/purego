@@ -1,4 +1,4 @@
-# vendored copy of purego v0.11.0
+# fork of [purego](https://github.com/ebitengine/purego) v0.11.1
 [![Go Reference](https://pkg.go.dev/badge/github.com/malivvan/purego?GOOS=darwin.svg)](https://pkg.go.dev/github.com/malivvan/purego?GOOS=darwin)
 
 A library for calling C functions from Go without Cgo.
